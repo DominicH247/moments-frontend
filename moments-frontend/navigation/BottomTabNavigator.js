@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
+import SocialsScreen from "../screens/SocialsScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -38,6 +39,15 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
           title: "Albums",
+          unmountOnBlur: false
+        }}
+      />
+      <BottomTab.Screen
+        name="Socials"
+        component={SocialsScreen}
+        options={{
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="ios-link" />,
+          title: "Socials",
           unmountOnBlur: false
         }}
       />
