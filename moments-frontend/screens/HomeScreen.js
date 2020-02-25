@@ -8,7 +8,7 @@ import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import AnimatedLoader from "react-native-animated-loader";
-import * as loadingAnimation from "../lottieLoading.json";
+import LottieView from "lottie-react-native";
 
 class HomeScreen extends Component {
   state = {
@@ -59,9 +59,7 @@ class HomeScreen extends Component {
   };
 
   uploadImage = event => {
-    this.setState(currentState => {
-      return { visible: !currentState.visible };
-    });
+    this.setState({ visible: true });
     let file = this.state.image.uri.replace("file://", "");
     const data = new FormData();
     data.append("profileImage", { uri: file, name: "image.jpeg" });
@@ -107,18 +105,21 @@ class HomeScreen extends Component {
             {this.state.image && (
               <StyledButton text="Upload to Bucket" onPress={this.uploadImage} />
             )}
-            {this.state.image && (
+            {this.state.image && !visible && (
               <Image style={styles.photoContainer} source={{ uri: this.state.image.uri }}></Image>
             )}
           </View>
-          <View style={styles.container}>
-            <AnimatedLoader
-              visible={visible}
-              overlayColor="rgba(255,255,255,0.75)"
-              animationStyle={loadingAnimation}
-              speed={1}
-            />
-          </View>
+          {visible && (
+            <View style={styles.container}>
+              <LottieView
+                visible={visible}
+                source={require("./lottieLoading.json")}
+                autoPlay
+                loop
+                style={{ height: 200 }}
+              />
+            </View>
+          )}
         </ScrollView>
       </View>
     );
