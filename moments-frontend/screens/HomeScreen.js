@@ -8,7 +8,7 @@ import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import LottieView from "lottie-react-native";
-import { ImageBrowser } from "expo-image-picker-multiple";
+import ImagePicker from "react-native-image-crop-picker";
 
 class HomeScreen extends Component {
   state = {
