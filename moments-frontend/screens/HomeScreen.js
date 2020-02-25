@@ -1,5 +1,14 @@
 import * as React from "react";
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Modal } from "react-native";
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+  Button
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Component } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -42,9 +51,13 @@ class HomeScreen extends Component {
       quality: 1
     });
     if (!result.cancelled) {
-      this.setState(currentState => {
-        return { image: [...currentState.image, result] };
-      });
+      if (this.state.image.length < 4) {
+        this.setState(currentState => {
+          return { image: [...currentState.image, result] };
+        });
+      } else {
+        alert("Please upload photos before choosing more");
+      }
     }
   };
 
@@ -56,10 +69,25 @@ class HomeScreen extends Component {
       quality: 1
     });
     if (!result.cancelled) {
-      this.setState(currentState => {
-        return { image: [...currentState.image, result] };
-      });
+      if (this.state.image.length < 4) {
+        this.setState(currentState => {
+          return { image: [...currentState.image, result] };
+        });
+      } else {
+        alert("Please upload photos before choosing more");
+      }
     }
+  };
+
+  removeImage = uri => {
+    console.log(this.state.image);
+    console.log(uri);
+    this.setState(currentState => {
+      const survivingImages = currentState.image.filter(image => {
+        return image.uri !== uri;
+      });
+      return { image: survivingImages };
+    });
   };
 
   uploadImage = event => {
@@ -120,13 +148,15 @@ class HomeScreen extends Component {
 
             {this.state.image.length > 1 && !visible && (
               <View style={styles.smallPhotoContainer}>
-                {this.state.image.map(item => {
+                {this.state.image.reverse().map(item => {
                   return (
-                    <Image
-                      key={item.uri}
-                      style={styles.onePhoto}
-                      source={{ uri: item.uri }}
-                    ></Image>
+                    <TouchableOpacity onPress={() => this.removeImage(item.uri)}>
+                      <Image
+                        key={item.uri}
+                        style={styles.onePhoto}
+                        source={{ uri: item.uri }}
+                      ></Image>
+                    </TouchableOpacity>
                   );
                 })}
               </View>
