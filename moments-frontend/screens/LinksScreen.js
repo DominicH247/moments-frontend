@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { RectButton, ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
+import StyledButton from "../components/StyledButton";
 
 class LinksScreen extends Component {
   state = {
@@ -34,17 +35,20 @@ class LinksScreen extends Component {
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View>
           <Text style={styles.text}>Your Images</Text>
-          <Button color="white" onPress={this.updatePhotos} title="Update Photos"></Button>
-          <View style={styles.photoContainer}>
-            {this.state.photos.reverse().map(url => {
-              console.log(url);
-              return (
-                <View>
-                  <Image style={styles.onePhoto} source={{ url }}></Image>
-                </View>
-              );
-            })}
-          </View>
+        </View>
+
+        <View>
+          <StyledButton text="Update Photos" onPress={this.updatePhotos} />
+        </View>
+
+        <View style={styles.photoContainer}>
+          {this.state.photos.reverse().map(url => {
+            return (
+              <View key={url}>
+                <Image style={styles.onePhoto} source={{ url }}></Image>
+              </View>
+            );
+          })}
         </View>
       </ScrollView>
     );
@@ -56,7 +60,7 @@ export default LinksScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#266A2F"
+    backgroundColor: "#2F2F2F"
   },
   contentContainer: {
     paddingTop: 15,
@@ -70,8 +74,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly"
   },
   onePhoto: {
+    backgroundColor: "white",
     marginTop: 25,
-    flex: 0,
     height: 150,
     width: 150
   },

@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import axios from "axios";
+import StyledButton from "../components/StyledButton";
 
 class HomeScreen extends Component {
   state = {
@@ -87,21 +88,20 @@ class HomeScreen extends Component {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View>
             <Text style={styles.text}>Please select an image</Text>
-            {this.state.image && (
-              <Image style={styles.photoContainer} source={{ uri: this.state.image.uri }}></Image>
-            )}
           </View>
-          <View style={styles.buttonContainer}>
+
+          <View
+            style={!this.state.image ? styles.buttonContainerRow : styles.buttonContainerColumn}
+          >
             <>
-              <Button color="white" onPress={this.pickImage} title="Camera Roll"></Button>
-              <Button color="white" onPress={this.takePicture} title="Take Photo"></Button>
+              <StyledButton text="Camera Roll" onPress={this.pickImage} />
+              <StyledButton text="Take Photo" onPress={this.takePicture} />
             </>
             {this.state.image && (
-              <Button
-                color="white"
-                onPress={this.uploadImage}
-                title="Upload Image to S3 Bucket"
-              ></Button>
+              <StyledButton text="Upload to Bucket" onPress={this.uploadImage} />
+            )}
+            {this.state.image && (
+              <Image style={styles.photoContainer} source={{ uri: this.state.image.uri }}></Image>
             )}
           </View>
         </ScrollView>
@@ -115,18 +115,28 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#266A2F"
+    backgroundColor: "#2F2F2F"
   },
   contentContainer: {
     paddingTop: 30,
     flex: 1,
     alignItems: "center"
   },
+  buttonContainerRow: {
+    flex: 0,
+    flexDirection: "row"
+  },
+  buttonContainerColumn: {
+    flex: 0,
+    flexDirection: "column",
+    alignItems: "center"
+  },
   photoContainer: {
+    margin: 10,
     flex: 0,
     alignItems: "center",
-    width: 400,
-    height: 400
+    width: 300,
+    height: 300
   },
   text: {
     color: "white",
