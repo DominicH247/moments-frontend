@@ -13,7 +13,7 @@ const StyledButton = props => {
 
 const styles = StyleSheet.create({
   button: {
-    margin: 10,
+    margin: 4,
     backgroundColor: "#3EC4CA",
     padding: 14,
     width: 180,

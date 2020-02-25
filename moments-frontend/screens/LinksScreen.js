@@ -8,12 +8,14 @@ import axios from "axios";
 import StyledButton from "../components/StyledButton";
 
 class LinksScreen extends Component {
+  isMounted = false;
   state = {
     photos: [],
     updated: false
   };
 
   componentDidMount() {
+    this.isMounted = true;
     axios
       .get("https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/crookydan")
       .then(response => {
@@ -29,6 +31,10 @@ class LinksScreen extends Component {
         this.setState({ photos: response.data.data.Item.picURL });
       });
   };
+
+  componentWillUnmount() {
+    this.isMounted = false;
+  }
 
   render() {
     return (
