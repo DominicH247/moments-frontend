@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Modal } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Component } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -7,8 +7,8 @@ import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
-import AnimatedLoader from "react-native-animated-loader";
 import LottieView from "lottie-react-native";
+import { ImageBrowser } from "expo-image-picker-multiple";
 
 class HomeScreen extends Component {
   state = {
@@ -25,11 +25,12 @@ class HomeScreen extends Component {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
+        // alert("Accept camera roll permissions to make this work!");
       }
+
       const { status2 } = await Permissions.askAsync(Permissions.CAMERA);
       if (status2 !== "granted") {
-        alert("Sorry, we need camera permissions to make this work!");
+        // alert("Accept camera permissions to make this work!");
       }
     }
   };
