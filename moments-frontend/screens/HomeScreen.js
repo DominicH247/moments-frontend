@@ -7,12 +7,14 @@ import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
+import AnimatedLoader from "react-native-animated-loader";
+import * as loadingAnimation from "../lottieLoading.json";
 
 class HomeScreen extends Component {
   state = {
     image: null,
     uploaded: true,
-    isLoading: false
+    visible: false
   };
 
   componentDidMount() {
@@ -57,6 +59,9 @@ class HomeScreen extends Component {
   };
 
   uploadImage = event => {
+    this.setState(currentState => {
+      return { visible: !currentState.visible };
+    });
     let file = this.state.image.uri.replace("file://", "");
     const data = new FormData();
     data.append("profileImage", { uri: file, name: "image.jpeg" });
@@ -75,7 +80,7 @@ class HomeScreen extends Component {
             { photos: response.data.location }
           );
         }
-        this.setState({ image: null });
+        this.setState({ image: null, visible: false });
       })
       .catch(error => {
         console.log("--------> Big Ol' Error -------->", error);
@@ -83,12 +88,14 @@ class HomeScreen extends Component {
   };
 
   render() {
+    const { visible } = this.state;
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View>
             <Text style={styles.text}>Please select an image</Text>
           </View>
+
           <View
             style={!this.state.image ? styles.buttonContainerRow : styles.buttonContainerColumn}
           >
@@ -96,12 +103,21 @@ class HomeScreen extends Component {
               <StyledButton text="Camera Roll" onPress={this.pickImage} />
               <StyledButton text="Take Photo" onPress={this.takePicture} />
             </>
+
             {this.state.image && (
               <StyledButton text="Upload to Bucket" onPress={this.uploadImage} />
             )}
             {this.state.image && (
               <Image style={styles.photoContainer} source={{ uri: this.state.image.uri }}></Image>
             )}
+          </View>
+          <View style={styles.container}>
+            <AnimatedLoader
+              visible={visible}
+              overlayColor="rgba(255,255,255,0.75)"
+              animationStyle={loadingAnimation}
+              speed={1}
+            />
           </View>
         </ScrollView>
       </View>
@@ -116,6 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#2F2F2F"
   },
+  lottie: { width: 100, height: 100 },
   contentContainer: {
     paddingTop: 30,
     flex: 1,
