@@ -27,7 +27,6 @@ class LinksScreen extends Component {
     axios
       .get("https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/crookydan")
       .then(response => {
-        console.log(response.data.data.Item.picURL);
         this.setState({ photos: response.data.data.Item.picURL });
       });
   };

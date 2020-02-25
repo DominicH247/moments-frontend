@@ -11,7 +11,8 @@ import StyledButton from "../components/StyledButton";
 class HomeScreen extends Component {
   state = {
     image: null,
-    uploaded: true
+    uploaded: true,
+    isLoading: false
   };
 
   componentDidMount() {
@@ -56,7 +57,6 @@ class HomeScreen extends Component {
   };
 
   uploadImage = event => {
-    // let file = Platform.OS === "android" ? this.state.image.uri : this.state.image.uri.replace("file://", "");
     let file = this.state.image.uri.replace("file://", "");
     const data = new FormData();
     data.append("profileImage", { uri: file, name: "image.jpeg" });
@@ -89,7 +89,6 @@ class HomeScreen extends Component {
           <View>
             <Text style={styles.text}>Please select an image</Text>
           </View>
-
           <View
             style={!this.state.image ? styles.buttonContainerRow : styles.buttonContainerColumn}
           >
