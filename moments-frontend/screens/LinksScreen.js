@@ -17,17 +17,18 @@ class LinksScreen extends Component {
   componentDidMount() {
     this.isMounted = true;
     axios
-      .get("https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/crookydan")
+      .get(`https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload/crookydan`)
       .then(response => {
-        this.setState({ photos: response.data.data.Item.picURL });
+        console.log(response.data.images);
+        this.setState({ photos: response.data.images });
       });
   }
 
   updatePhotos = () => {
     axios
-      .get("https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/crookydan")
+      .get(`https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload/crookydan`)
       .then(response => {
-        this.setState({ photos: response.data.data.Item.picURL });
+        this.setState({ photos: response.data.images });
       });
   };
 

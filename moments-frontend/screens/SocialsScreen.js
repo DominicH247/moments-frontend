@@ -13,7 +13,6 @@ class SocialsScreen extends Component {
   };
 
   updateUsername = event => {
-    console.log(event);
     this.setState({ instaUsername: event });
   };
 

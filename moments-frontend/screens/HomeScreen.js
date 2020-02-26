@@ -97,6 +97,7 @@ class HomeScreen extends Component {
       const data = new FormData();
       data.append("profileImage", { uri: file, name: "image.jpeg" });
       axios
+        // OLD HEROKU SERVER -> "https://calm-scrubland-54250.herokuapp.com/api/images/" //
         .post("https://calm-scrubland-54250.herokuapp.com/api/images/", data, {
           headers: {
             accept: "application/json",
@@ -106,10 +107,18 @@ class HomeScreen extends Component {
         })
         .then(response => {
           if (response.status === 200) {
-            axios.patch(
-              `https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/crookydan`,
-              { photos: response.data.location }
-            );
+            axios
+              .post(
+                // DBserver ON AWS -> "https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload" //
+                `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload`,
+                { imageLocation: response.data.location, usr: "crookydan" }
+              )
+              .then(response => {
+                console.log(response);
+              })
+              .catch(error => {
+                console.log(error);
+              });
           }
           this.setState({ image: [], visible: false });
         })
