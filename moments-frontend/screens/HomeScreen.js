@@ -8,6 +8,7 @@ import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import LottieView from "lottie-react-native";
+import Amplify, { Auth } from "aws-amplify";
 
 class HomeScreen extends Component {
   state = {
@@ -36,24 +37,24 @@ class HomeScreen extends Component {
   };
 
   pickImage = async () => {
-    if (this.state.username.length > 5) {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1
-      });
-      if (!result.cancelled) {
-        if (this.state.image.length < 4) {
-          this.setState(currentState => {
-            return { image: [...currentState.image, result] };
-          });
-        } else {
-          alert("Please upload photos before choosing more");
-        }
+    Auth.currentAuthenticatedUser().then(response => {
+      console.log(response, "USER RESPONSE");
+    });
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1
+    });
+    if (!result.cancelled) {
+      if (this.state.image.length < 4) {
+        this.setState(currentState => {
+          return { image: [...currentState.image, result] };
+        });
+      } else {
+        alert("Please upload photos before choosing more");
       }
-    } else {
-      alert("Please login");
     }
   };
 

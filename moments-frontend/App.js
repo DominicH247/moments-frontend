@@ -7,12 +7,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import useLinking from "./navigation/useLinking";
-import ThemeContextProvider from "./context/themeContext";
-
-// import Amplify from "aws-amplify";
-// import config from "./aws-exports";
-// import { withAuthenticator } from "aws-amplify-react-native";
-// Amplify.configure(config);
 
 const Stack = createStackNavigator();
 

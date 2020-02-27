@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { TextInput, View, Button, StyleSheet } from "react-native";
+import { TextInput, View, StyleSheet } from "react-native";
+import StyledButton from "../components/StyledButton";
+import Amplify, { Auth } from "aws-amplify";
+import config from "../aws-exports";
+import { withAuthenticator } from "aws-amplify-react-native";
+
+Amplify.configure(config);
 
 export default class LoginScreen extends Component {
   isMounted = false;
@@ -7,35 +13,38 @@ export default class LoginScreen extends Component {
     image: [],
     uploaded: true,
     visible: false,
-    username: ""
+    username: "",
+    password: "",
+    email: "",
+    code: ""
   };
 
   componentDidMount() {
     this.isMounted = true;
   }
 
-  onLogin() {
-    const { username } = this.state;
-    if (username.length > 5) {
-      alert(`Your username is ${username}`);
-    } else {
-      alert("Enter Valid Username");
-    }
-  }
+  signUp = () => {
+    // const { username, password, email } = this.state;
+    Auth.signUp({
+      username: this.state.username,
+      password: this.state.password,
+      attributes: { email: this.state.email }
+    });
+  };
 
-  onSignup() {
-    const { username } = this.state;
-    if (username.length > 5) {
-      alert(`You have signed up as ${username}`);
-    } else if (username.length === 0) {
-      alert("Enter Valid Username");
-    } else {
-      alert("Username requires at least 6 characters");
-    }
-  }
+  confirmSignUp = () => {
+    Auth.confirmSignUp(this.state.username, this.state.code).then(response => {
+      console.log(response, "RESPONSE");
+    });
+  };
+
+  signIn = () => {
+    Auth.signIn(this.state.username, this.state.password).then(response => {
+      console.log(response, "RESPONSE");
+    });
+  };
 
   render() {
-    const { username } = this.state;
     return (
       <View>
         <TextInput
@@ -43,33 +52,45 @@ export default class LoginScreen extends Component {
           onChangeText={username => this.setState({ username })}
           placeholder={"Username"}
           placeholderTextColor={"turquoise"}
-          style={styles.input}
         />
-        <Button title={"Login"} style={styles.button} onPress={this.onLogin.bind(this)} />
-        <Button title={"Signup"} style={styles.button} onPress={this.onSignup.bind(this)} />
-        {this.props.navigation.navigate("HomeScreen", { username })}
+        <TextInput
+          value={this.state.password}
+          onChangeText={password => this.setState({ password })}
+          placeholder={"password"}
+          placeholderTextColor={"turquoise"}
+          secureTextEntry={true}
+        />
+        <TextInput
+          value={this.state.email}
+          onChangeText={email => this.setState({ email })}
+          placeholder={"email"}
+          placeholderTextColor={"turquoise"}
+        />
+
+        <StyledButton text="SignUp" onPress={this.signUp} />
+        <TextInput
+          value={this.state.code}
+          onChangeText={code => this.setState({ code })}
+          placeholder={"SignUp Code"}
+          placeholderTextColor={"turquoise"}
+        />
+        <StyledButton text="Confirm Signup Code" onPress={this.confirmSignUp} />
+
+        <TextInput
+          value={this.state.username}
+          onChangeText={username => this.setState({ username })}
+          placeholder={"Username"}
+          placeholderTextColor={"turquoise"}
+        />
+        <TextInput
+          value={this.state.password}
+          onChangeText={password => this.setState({ password })}
+          placeholder={"password"}
+          placeholderTextColor={"turquoise"}
+          secureTextEntry={true}
+        />
+        <StyledButton text="Sign In" onPress={this.signIn} />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  input: {
-    alignItems: "center",
-    margin: 8,
-    width: 160,
-    height: 44,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "turquoise",
-    borderRadius: 15
-  },
-  button: {
-    margin: 8,
-    backgroundColor: "#3EC4CA",
-    padding: 14,
-    width: 160,
-    borderRadius: 15,
-    alignItems: "center"
-  }
-});
