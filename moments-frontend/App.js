@@ -7,11 +7,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import useLinking from "./navigation/useLinking";
-import Amplify from "aws-amplify";
-import config from "./aws-exports";
-import { withAuthenticator } from "aws-amplify-react-native";
 
-Amplify.configure(config);
+// import Amplify from "aws-amplify";
+// import config from "./aws-exports";
+// import { withAuthenticator } from "aws-amplify-react-native";
+// Amplify.configure(config);
+
 const Stack = createStackNavigator();
 
 function App(props) {
@@ -69,4 +70,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withAuthenticator(App, true);
+export default App;

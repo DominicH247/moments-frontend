@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Image, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Component } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
@@ -13,7 +13,8 @@ class HomeScreen extends Component {
   state = {
     image: [],
     uploaded: true,
-    visible: false
+    visible: false,
+    username: ""
   };
 
   componentDidMount() {
@@ -35,20 +36,24 @@ class HomeScreen extends Component {
   };
 
   pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1
-    });
-    if (!result.cancelled) {
-      if (this.state.image.length < 4) {
-        this.setState(currentState => {
-          return { image: [...currentState.image, result] };
-        });
-      } else {
-        alert("Please upload photos before choosing more");
+    if (this.state.username.length > 5) {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1
+      });
+      if (!result.cancelled) {
+        if (this.state.image.length < 4) {
+          this.setState(currentState => {
+            return { image: [...currentState.image, result] };
+          });
+        } else {
+          alert("Please upload photos before choosing more");
+        }
       }
+    } else {
+      alert("Please login");
     }
   };
 
@@ -71,8 +76,6 @@ class HomeScreen extends Component {
   };
 
   removeImage = uri => {
-    console.log(this.state.image);
-    console.log(uri);
     this.setState(currentState => {
       const survivingImages = currentState.image.filter(image => {
         return image.uri !== uri;
@@ -125,7 +128,6 @@ class HomeScreen extends Component {
               <StyledButton text="Camera Roll" onPress={this.pickImage} />
               <StyledButton text="Take Photo" onPress={this.takePicture} />
             </>
-
             {this.state.image.length > 0 && (
               <StyledButton text="Upload to Bucket" onPress={this.uploadImage} />
             )}

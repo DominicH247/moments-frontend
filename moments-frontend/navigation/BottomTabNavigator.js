@@ -5,6 +5,7 @@ import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
 import SocialsScreen from "../screens/SocialsScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -48,6 +49,15 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="ios-link" />,
           title: "Socials",
+          unmountOnBlur: false
+        }}
+      />
+      <BottomTab.Screen
+        name="Login/Signup"
+        component={LoginScreen}
+        options={{
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-person" />,
+          title: "Login/Signup",
           unmountOnBlur: false
         }}
       />
