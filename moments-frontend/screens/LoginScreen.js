@@ -24,7 +24,6 @@ export default class LoginScreen extends Component {
   }
 
   signUp = () => {
-    // const { username, password, email } = this.state;
     Auth.signUp({
       username: this.state.username,
       password: this.state.password,
