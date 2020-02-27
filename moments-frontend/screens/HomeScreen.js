@@ -114,7 +114,6 @@ class HomeScreen extends Component {
   };
 
   render() {
-    console.log(this.state.image.length);
     const { visible } = this.state;
     return (
       <View style={styles.container}>

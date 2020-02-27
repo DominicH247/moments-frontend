@@ -16,7 +16,11 @@ export default class LoginScreen extends Component {
 
   onLogin() {
     const { username } = this.state;
-    alert(`Your username is ${username}`);
+    if (username.length > 5) {
+      alert(`Your username is ${username}`);
+    } else {
+      alert("Enter Valid Username");
+    }
   }
 
   onSignup() {
@@ -31,17 +35,19 @@ export default class LoginScreen extends Component {
   }
 
   render() {
+    const { username } = this.state;
     return (
       <View>
         <TextInput
           value={this.state.username}
           onChangeText={username => this.setState({ username })}
           placeholder={"Username"}
-          placeholderTextColor="turquoise"
+          placeholderTextColor={"turquoise"}
           style={styles.input}
         />
-        <Button title={"Login"} style={styles.input} onPress={this.onLogin.bind(this)} />
-        <Button title={"Signup"} style={styles.input} onPress={this.onSignup.bind(this)} />
+        <Button title={"Login"} style={styles.button} onPress={this.onLogin.bind(this)} />
+        <Button title={"Signup"} style={styles.button} onPress={this.onSignup.bind(this)} />
+        {this.props.navigation.navigate("HomeScreen", { username })}
       </View>
     );
   }
@@ -49,11 +55,21 @@ export default class LoginScreen extends Component {
 
 const styles = StyleSheet.create({
   input: {
-    width: 200,
+    alignItems: "center",
+    margin: 8,
+    width: 160,
     height: 44,
-    padding: 10,
+    padding: 14,
     borderWidth: 1,
     borderColor: "turquoise",
-    marginBottom: 10
+    borderRadius: 15
+  },
+  button: {
+    margin: 8,
+    backgroundColor: "#3EC4CA",
+    padding: 14,
+    width: 160,
+    borderRadius: 15,
+    alignItems: "center"
   }
 });
