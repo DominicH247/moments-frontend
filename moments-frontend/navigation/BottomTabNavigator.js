@@ -31,7 +31,7 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
           title: "Upload a Photo",
-          unmountOnBlur: false
+          unmountOnBlur: true
         }}
       />
       <BottomTab.Screen
@@ -40,7 +40,7 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
           title: "Albums",
-          unmountOnBlur: false
+          unmountOnBlur: true
         }}
       />
       <BottomTab.Screen
@@ -49,7 +49,7 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="ios-link" />,
           title: "Socials",
-          unmountOnBlur: false
+          unmountOnBlur: true
         }}
       />
       <BottomTab.Screen

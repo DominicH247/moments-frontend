@@ -20,6 +20,13 @@ class HomeScreen extends Component {
 
   componentDidMount() {
     this.getPermissionAsync();
+    Auth.currentAuthenticatedUser()
+      .then(response => {
+        this.setState({ username: response.username });
+      })
+      .catch(response => {
+        alert("Please Login");
+      });
   }
 
   getPermissionAsync = async () => {
@@ -37,10 +44,6 @@ class HomeScreen extends Component {
   };
 
   pickImage = async () => {
-    Auth.currentAuthenticatedUser().then(response => {
-      console.log(response, "USER RESPONSE");
-    });
-
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -103,7 +106,7 @@ class HomeScreen extends Component {
           if (response.status === 200) {
             axios.post(
               `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload/`,
-              { imageLocation: response.data.location, usr: "crookydan" }
+              { imageLocation: response.data.location, usr: this.state.username }
             );
           }
           this.setState({ image: [], visible: false });

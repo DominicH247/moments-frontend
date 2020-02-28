@@ -43,6 +43,10 @@ export default class LoginScreen extends Component {
     });
   };
 
+  signOut = () => {
+    Auth.signOut();
+  };
+
   render() {
     return (
       <View>
@@ -89,6 +93,7 @@ export default class LoginScreen extends Component {
           secureTextEntry={true}
         />
         <StyledButton text="Sign In" onPress={this.signIn} />
+        <StyledButton text="Sign Out" onPress={this.signOut} />
       </View>
     );
   }

@@ -3,17 +3,28 @@ import { StyleSheet, Text, View, Image, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
+import Amplify, { Auth } from "aws-amplify";
 
 class SocialsScreen extends Component {
   state = {
     instaUsername: "",
     instaPhotos: [],
     valid: true,
-    reason: "Invalid Input"
+    reason: "Invalid Input",
+    username: ""
   };
 
+  componentDidMount() {
+    Auth.currentAuthenticatedUser()
+      .then(response => {
+        this.setState({ username: response.username });
+      })
+      .catch(response => {
+        alert("Please Login");
+      });
+  }
+
   updateUsername = event => {
-    console.log(event);
     this.setState({ instaUsername: event });
   };
 
@@ -35,10 +46,10 @@ class SocialsScreen extends Component {
           }
         })
         .catch(error => {
-          this.setState({ valid: false, reaon: "Invalid Input" });
+          this.setState({ valid: false, reason: "Invalid Input" });
         });
     } else {
-      this.setState({ valid: false, reaon: "Invalid Input" });
+      this.setState({ valid: false, reason: "Invalid Input" });
     }
   };
 
@@ -48,12 +59,10 @@ class SocialsScreen extends Component {
     selectedFiles.map(url => {
       axios
         .patch(
-          `https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/crookydan`,
+          `https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/${this.state.username}`,
           { photos: url }
         )
-        .then(response => {
-          console.log(response);
-        });
+        .then(response => {});
     });
   };
 
