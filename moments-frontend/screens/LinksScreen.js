@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Component } from "react";
-import { StyleSheet, Text, View, Image, Button } from "react-native";
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
@@ -35,11 +35,34 @@ class LinksScreen extends Component {
       });
   };
 
+  deleteImageFromDB = url => {
+    console.log(url);
+    // remove from DB
+    const data = { url: url };
+    // console.log(data);
+    axios
+      .post(
+        `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/images/${this.state.username}`,
+        data
+      )
+      .then(response => {
+        console.log(response);
+      });
+    // remove from state
+    this.setState(currentState => {
+      const survivingPhotos = currentState.photos.filter(photo => {
+        return photo !== url;
+      });
+      return { photos: survivingPhotos };
+    });
+  };
+
   componentWillUnmount() {
     this.isMounted = false;
   }
 
   render() {
+    console.log(this.state.username);
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View>
@@ -54,7 +77,9 @@ class LinksScreen extends Component {
           {this.state.photos.reverse().map(url => {
             return (
               <View key={url}>
-                <Image style={styles.onePhoto} source={{ url }}></Image>
+                <TouchableOpacity onPress={() => this.deleteImageFromDB(url)}>
+                  <Image style={styles.onePhoto} source={{ url }}></Image>
+                </TouchableOpacity>
               </View>
             );
           })}
