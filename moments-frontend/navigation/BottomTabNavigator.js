@@ -4,6 +4,8 @@ import { StyleSheet } from "react-native";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
+import SocialsScreen from "../screens/SocialsScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -29,7 +31,7 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
           title: "Upload a Photo",
-          unmountOnBlur: false
+          unmountOnBlur: true
         }}
       />
       <BottomTab.Screen
@@ -39,6 +41,24 @@ export default function BottomTabNavigator({ navigation }) {
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
           title: "Albums",
           unmountOnBlur: true
+        }}
+      />
+      <BottomTab.Screen
+        name="Socials"
+        component={SocialsScreen}
+        options={{
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="ios-link" />,
+          title: "Socials",
+          unmountOnBlur: true
+        }}
+      />
+      <BottomTab.Screen
+        name="Login/Signup"
+        component={LoginScreen}
+        options={{
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-person" />,
+          title: "Login/Signup",
+          unmountOnBlur: false
         }}
       />
     </BottomTab.Navigator>
