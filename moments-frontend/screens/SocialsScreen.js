@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image, TextInput } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
+import StyledDarkButton from "../components/StyledDarkButton";
 import Amplify, { Auth } from "aws-amplify";
 
 class SocialsScreen extends Component {
@@ -62,53 +63,85 @@ class SocialsScreen extends Component {
           `https://k8445cuwvd.execute-api.eu-west-2.amazonaws.com/latest/api/photos/${this.state.username}`,
           { photos: url }
         )
-        .then(response => {});
+        .then(response => {
+          this.setState({ instaPhotos: [] });
+        });
+    });
+  };
+
+  removeImage = url => {
+    this.setState(currentState => {
+      const survivingImages = currentState.instaPhotos.filter(image => {
+        return image !== url;
+      });
+      return { instaPhotos: survivingImages };
     });
   };
 
   render() {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <View>
-          <Text style={styles.text}>Get Your Photos from Social Media</Text>
-        </View>
-
-        <View>
-          <TextInput
-            style={{
-              height: 40,
-              width: 300,
-              paddingLeft: 15,
-              borderColor: "gray",
-              borderWidth: 1,
-              color: "white"
-            }}
-            onChangeText={this.updateUsername}
-            value={this.state.instaUsername}
-          />
-        </View>
-
-        <View>
-          <StyledButton text="Connect Instagram" onPress={this.getInstaPhotos} />
-          <StyledButton text="Upload All Photos to DB" onPress={this.uploadMultipleImages} />
-        </View>
-
-        {!this.state.valid && (
+      <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
           <View>
-            <Text style={styles.text}>{this.state.reason}</Text>
+            <Text style={styles.text}>Get Your Photos from Social Media</Text>
+          </View>
+
+          {this.state.instaPhotos.length === 0 && (
+            <>
+              <View style={styles.buttonContainer}>
+                <Text style={styles.smallText}> Enter instagram username to connect: </Text>
+                <TextInput
+                  style={{
+                    height: 40,
+                    width: 300,
+                    marginBottom: 10,
+                    paddingLeft: 15,
+                    borderColor: "gray",
+                    borderWidth: 1,
+                    color: "white"
+                  }}
+                  onChangeText={this.updateUsername}
+                  value={this.state.instaUsername}
+                />
+                <StyledButton text="Connect Instagram" onPress={this.getInstaPhotos} />
+              </View>
+            </>
+          )}
+
+          {this.state.instaPhotos.length > 0 && (
+            <>
+              <View style={styles.buttonContainer}>
+                <Text style={styles.smallText}>
+                  Tap photos to remove them from your selection before uploading to your frame
+                </Text>
+                <View style={styles.photoContainer}>
+                  {this.state.instaPhotos.map(url => {
+                    return (
+                      <View key={url}>
+                        <TouchableOpacity onPress={() => this.removeImage(url)}>
+                          <Image style={styles.onePhoto} source={{ url }}></Image>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            </>
+          )}
+
+          {!this.state.valid && (
+            <View>
+              <Text style={styles.text}>{this.state.reason}</Text>
+            </View>
+          )}
+        </ScrollView>
+
+        {this.state.instaPhotos.length > 0 && (
+          <View style={styles.bottomButton}>
+            <StyledDarkButton text="Send To Frame" onPress={this.uploadMultipleImages} />
           </View>
         )}
-
-        <View style={styles.photoContainer}>
-          {this.state.instaPhotos.map(url => {
-            return (
-              <View key={url}>
-                <Image style={styles.onePhoto} source={{ url }}></Image>
-              </View>
-            );
-          })}
-        </View>
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -121,7 +154,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#2F2F2F"
   },
   contentContainer: {
-    paddingTop: 15,
+    paddingTop: 30,
+    alignItems: "center"
+  },
+  buttonContainer: {
+    flex: 0,
+    width: 400,
     alignItems: "center"
   },
   photoContainer: {
@@ -141,6 +179,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontSize: 30,
-    padding: 20
+    paddingTop: 20,
+    paddingLeft: 30,
+    paddingRight: 30
+  },
+  smallText: {
+    textAlign: "center",
+    color: "turquoise",
+    fontSize: 15,
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 5
+  },
+  bottomButton: {
+    flex: 0,
+    alignItems: "center"
   }
 });

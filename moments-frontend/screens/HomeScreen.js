@@ -7,6 +7,7 @@ import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
+import StyledDarkButton from "../components/StyledDarkButton";
 import LottieView from "lottie-react-native";
 import Amplify, { Auth } from "aws-amplify";
 
@@ -125,28 +126,32 @@ class HomeScreen extends Component {
           <View>
             <Text style={styles.text}>Please Select Images</Text>
           </View>
-
           <View style={styles.buttonContainerColumn}>
             <>
               <StyledButton text="Camera Roll" onPress={this.pickImage} />
               <StyledButton text="Take Photo" onPress={this.takePicture} />
             </>
-            {this.state.image.length > 0 && (
-              <StyledButton text="Upload to Bucket" onPress={this.uploadImage} />
-            )}
-
             {this.state.image.length === 1 && !visible && (
-              <Image
-                style={styles.photoContainer}
-                source={{ uri: this.state.image[0].uri }}
-              ></Image>
+              <>
+                <Text style={styles.smallText}>
+                  Tap photos to remove them from your selection before uploading to your frame
+                </Text>
+                <TouchableOpacity onPress={() => this.removeImage(this.state.image[0].uri)}>
+                  <Image
+                    style={styles.photoContainer}
+                    source={{ uri: this.state.image[0].uri }}
+                  ></Image>
+                </TouchableOpacity>
+              </>
             )}
-
             {this.state.image.length > 1 && !visible && (
               <View style={styles.smallPhotoContainer}>
+                <Text style={styles.smallText}>
+                  Tap photos to remove them from your selection before uploading to your frame
+                </Text>
                 {this.state.image.reverse().map(item => {
                   return (
-                    <TouchableOpacity onPress={() => this.removeImage(item.uri)}>
+                    <TouchableOpacity key={item.uri} onPress={() => this.removeImage(item.uri)}>
                       <Image
                         key={item.uri}
                         style={styles.onePhoto}
@@ -170,6 +175,13 @@ class HomeScreen extends Component {
             </View>
           )}
         </ScrollView>
+        {this.state.image.length > 0 && (
+          <>
+            <View style={styles.bottomButton}>
+              <StyledDarkButton text="Send To Frame" onPress={this.uploadImage} />
+            </View>
+          </>
+        )}
       </View>
     );
   }
@@ -216,9 +228,22 @@ const styles = StyleSheet.create({
     height: 150,
     width: 150
   },
+  smallText: {
+    textAlign: "center",
+    color: "turquoise",
+    fontSize: 15,
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 5
+  },
   text: {
     color: "white",
     fontSize: 30,
     padding: 20
+  },
+  bottomButton: {
+    flex: 0,
+    alignItems: "center"
   }
 });

@@ -62,15 +62,17 @@ class LinksScreen extends Component {
   }
 
   render() {
-    console.log(this.state.username);
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View>
-          <Text style={styles.text}>Your Images</Text>
+          <Text style={styles.text}>Your Current Images</Text>
         </View>
 
-        <View>
+        <View style={styles.top}>
           <StyledButton text="Update Photos" onPress={this.updatePhotos} />
+          {this.state.photos.length > 0 && (
+            <Text style={styles.smallText}>Tap photos to remove them from your frame</Text>
+          )}
         </View>
 
         <View style={styles.photoContainer}>
@@ -97,7 +99,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#2F2F2F"
   },
   contentContainer: {
-    paddingTop: 15,
+    paddingTop: 30,
+    alignItems: "center"
+  },
+  top: {
     alignItems: "center"
   },
   photoContainer: {
@@ -116,6 +121,12 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     fontSize: 30,
+    padding: 20
+  },
+  smallText: {
+    textAlign: "center",
+    color: "white",
+    fontSize: 15,
     padding: 20
   }
 });
