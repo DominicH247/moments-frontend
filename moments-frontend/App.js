@@ -22,9 +22,9 @@ function App(props) {
   const slides = [
     {
       key: "moments1",
-      title: "Hello, welcome to moments",
-      text: "this is an app",
-      text2: "for you to use",
+      title: "Moments",
+      text: "The Photo Sharing App",
+      text2: "Swipe to Get Started",
       image: require("./assets/images/diverse-group.png"),
       height: 250,
       width: 380,
@@ -47,7 +47,7 @@ function App(props) {
       image: require("./assets/images/family-frame.png"),
       height: 270,
       width: 350,
-      backgroundColor: "#cdd7d6"
+      backgroundColor: "#f4858e"
     }
   ];
 
@@ -62,7 +62,7 @@ function App(props) {
           backgroundColor: item.backgroundColor
         }}
       >
-        <Text>{item.title}</Text>
+        <Text style={styles.slideTitle}>{item.title}</Text>
         <Image
           source={item.image}
           style={{
@@ -70,8 +70,10 @@ function App(props) {
             width: item.width
           }}
         />
-        <Text>{item.text}</Text>
-        <Text>{item.text2}</Text>
+        <View>
+          <Text style={styles.infoText}>{item.text}</Text>
+          <Text style={styles.infoText}>{item.text2}</Text>
+        </View>
       </View>
     );
   };
@@ -151,9 +153,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center"
   },
-  image: {
-    height: 270,
-    width: 350
+  slideTitle: {
+    marginTop: 15,
+    fontSize: 45,
+    color: "white",
+    textAlign: "center"
+  },
+  infoText: {
+    color: "white",
+    fontSize: 25,
+    padding: 10,
+    textAlign: "center"
   }
 });
 
