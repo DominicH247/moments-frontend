@@ -68,7 +68,6 @@ export default class LoginScreen extends Component {
   uploadReferenceImage = () => {
     console.log("UPLOADING");
     this.setState({ visible: true });
-    // this.state.image.uri.replace("file://", "");
     let file =
       Platform.OS === "android"
         ? this.state.image.uri
@@ -204,13 +203,7 @@ export default class LoginScreen extends Component {
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
-                      onChangeText={password => {
-                        if (password.includes("-")) {
-                          console.log("Password cannot contain hyphens");
-                        } else {
-                          this.setState({ password });
-                        }
-                      }}
+                      onChangeText={password => this.setState({ password })}
                       placeholder={"password"}
                       placeholderTextColor={"turquoise"}
                       secureTextEntry={true}
