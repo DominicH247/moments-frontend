@@ -68,11 +68,19 @@ export default class LoginScreen extends Component {
   uploadReferenceImage = () => {
     console.log("UPLOADING");
     this.setState({ visible: true });
-    this.state.image.uri.replace("file://", "");
+    // this.state.image.uri.replace("file://", "");
+    let file =
+      Platform.OS === "android"
+        ? this.state.image.uri
+        : this.state.image.uri.replace("file://", "");
     const data = new FormData();
-    data.append("profileImage", { uri: this.state.image.uri, name: "image.jpeg" });
+    data.append("profileImage", {
+      uri: file,
+      name: "image.jpeg",
+      type: "image/jpeg"
+    });
     axios
-      .post("https://moments-s3.herokuapp.com/api/upload/reference/alex", data, {
+      .post(`https://moments-s3.herokuapp.com/api/upload/reference/${this.state.username}`, data, {
         headers: {
           accept: "application/json",
           "Accept-Language": "en-US,en;q=0.8",
@@ -196,7 +204,13 @@ export default class LoginScreen extends Component {
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
-                      onChangeText={password => this.setState({ password })}
+                      onChangeText={password => {
+                        if (password.includes("-")) {
+                          console.log("Password cannot contain hyphens");
+                        } else {
+                          this.setState({ password });
+                        }
+                      }}
                       placeholder={"password"}
                       placeholderTextColor={"turquoise"}
                       secureTextEntry={true}

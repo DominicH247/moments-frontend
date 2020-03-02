@@ -94,9 +94,14 @@ class HomeScreen extends Component {
   uploadImage = event => {
     this.setState({ visible: true });
     this.state.image.forEach(item => {
-      let file = item.uri.replace("file://", "");
+      let file = Platform.OS === "android" ? item.uri : item.uri.replace("file://", "");
       const data = new FormData();
-      data.append("profileImage", { uri: file, name: "image.jpeg" });
+      data.append("profileImage", {
+        uri: file,
+        name: "image.jpeg",
+        type: "image/jpeg"
+      });
+      console.log(data, "THIS IS DATA");
       axios
         .post("https://moments-s3.herokuapp.com/api/upload", data, {
           headers: {
@@ -132,12 +137,12 @@ class HomeScreen extends Component {
                 This app allows you to control what is displayed on your pi frame, get started by
                 selecting one or more images below.
               </Text>
-              <Ionicons
+              {/* <Ionicons
                 name="md-checkmark-circle"
                 size="40"
                 color="white"
                 onPress={() => this.setState({ topView: false })}
-              />
+              /> */}
             </View>
           )}
           <View>
