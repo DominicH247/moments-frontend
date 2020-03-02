@@ -196,7 +196,13 @@ export default class LoginScreen extends Component {
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.username}
-                      onChangeText={username => this.setState({ username })}
+                      onChangeText={username => {
+                        if (username.includes("-")) {
+                          alert("Username can not contain hyphens.");
+                        } else {
+                          this.setState({ username });
+                        }
+                      }}
                       placeholder={"Username"}
                       placeholderTextColor={"turquoise"}
                     />
