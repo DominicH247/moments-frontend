@@ -103,6 +103,7 @@ export default class LoginScreen extends Component {
       attributes: { email: this.state.email }
     })
       .then(response => {
+        console.log(response, "<<<<<< sign up");
         this.setState({ hasSignedUp: true });
         data = { usr: response.user.username };
         axios
@@ -116,7 +117,11 @@ export default class LoginScreen extends Component {
       })
       .catch(error => {
         console.log(error);
-        alert("Problem with sign up");
+        if (error.code === "UsernameExistsException") {
+          alert(error.message);
+        } else {
+          alert("Problem with sign up");
+        }
       });
   };
 
