@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-const StyledButton = props => {
+const StyledDarkButton = props => {
   const content = (
     <View style={styles.button}>
       <Text style={styles.text}>{props.text}</Text>
@@ -14,9 +14,9 @@ const StyledButton = props => {
 const styles = StyleSheet.create({
   button: {
     margin: 8,
-    backgroundColor: "#3EC4CA",
+    backgroundColor: "#C70039",
     padding: 14,
-    width: 270,
+    width: 350,
     borderRadius: 15,
     alignItems: "center",
     shadowColor: "black",
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default StyledButton;
+export default StyledDarkButton;

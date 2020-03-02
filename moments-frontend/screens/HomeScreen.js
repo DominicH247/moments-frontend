@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import { Icon } from "react-native-elements";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Component } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -7,11 +8,14 @@ import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
+import StyledDarkButton from "../components/StyledDarkButton";
 import LottieView from "lottie-react-native";
 import Amplify, { Auth } from "aws-amplify";
+import { Ionicons } from "@expo/vector-icons";
 
 class HomeScreen extends Component {
   state = {
+    topView: true,
     image: [],
     uploaded: true,
     visible: false,
@@ -65,7 +69,6 @@ class HomeScreen extends Component {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1
     });
     if (!result.cancelled) {
@@ -122,31 +125,50 @@ class HomeScreen extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          {this.state.topView && (
+            <View style={styles.topContainer}>
+              <Text style={styles.topTitle}>Welcome to moments</Text>
+              <Text style={styles.topText}>
+                This app allows you to control what is displayed on your pi frame, get started by
+                selecting one or more images below.
+              </Text>
+              <Ionicons
+                name="md-checkmark-circle"
+                size="40"
+                color="white"
+                onPress={() => this.setState({ topView: false })}
+              />
+            </View>
+          )}
           <View>
             <Text style={styles.text}>Please Select Images</Text>
           </View>
-
           <View style={styles.buttonContainerColumn}>
             <>
               <StyledButton text="Camera Roll" onPress={this.pickImage} />
               <StyledButton text="Take Photo" onPress={this.takePicture} />
             </>
-            {this.state.image.length > 0 && (
-              <StyledButton text="Upload to Bucket" onPress={this.uploadImage} />
-            )}
-
             {this.state.image.length === 1 && !visible && (
-              <Image
-                style={styles.photoContainer}
-                source={{ uri: this.state.image[0].uri }}
-              ></Image>
+              <>
+                <Text style={styles.smallText}>
+                  Tap photos to remove them from your selection before uploading to your frame
+                </Text>
+                <TouchableOpacity onPress={() => this.removeImage(this.state.image[0].uri)}>
+                  <Image
+                    style={styles.photoContainer}
+                    source={{ uri: this.state.image[0].uri }}
+                  ></Image>
+                </TouchableOpacity>
+              </>
             )}
-
             {this.state.image.length > 1 && !visible && (
               <View style={styles.smallPhotoContainer}>
+                <Text style={styles.smallText}>
+                  Tap photos to remove them from your selection before uploading to your frame
+                </Text>
                 {this.state.image.reverse().map(item => {
                   return (
-                    <TouchableOpacity onPress={() => this.removeImage(item.uri)}>
+                    <TouchableOpacity key={item.uri} onPress={() => this.removeImage(item.uri)}>
                       <Image
                         key={item.uri}
                         style={styles.onePhoto}
@@ -170,6 +192,13 @@ class HomeScreen extends Component {
             </View>
           )}
         </ScrollView>
+        {this.state.image.length > 0 && (
+          <>
+            <View style={styles.bottomButton}>
+              <StyledDarkButton text="Send To Frame" onPress={this.uploadImage} />
+            </View>
+          </>
+        )}
       </View>
     );
   }
@@ -183,8 +212,44 @@ const styles = StyleSheet.create({
     backgroundColor: "#2F2F2F"
   },
   contentContainer: {
-    paddingTop: 30,
+    // paddingTop: 30,
     alignItems: "center"
+  },
+  topContainer: {
+    backgroundColor: "#0F4B53",
+    height: 200,
+    width: 450,
+    // flexDirection: "row",
+    // flexWrap: "wrap",
+    alignItems: "center",
+    // justifyContent: "space-around"
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5
+  },
+  topTitle: {
+    marginTop: 20,
+    padding: 5,
+    width: 320,
+    textAlign: "center",
+    backgroundColor: "#718183",
+    fontSize: 22,
+    color: "white"
+  },
+  topText: {
+    marginTop: 10,
+    padding: 5,
+    width: 320,
+    height: 110,
+    textAlign: "center",
+    backgroundColor: "#718183",
+    fontSize: 18,
+    color: "white"
   },
   lottie: { width: 100, height: 100 },
   buttonContainerRow: {
@@ -216,9 +281,22 @@ const styles = StyleSheet.create({
     height: 150,
     width: 150
   },
+  smallText: {
+    textAlign: "center",
+    color: "turquoise",
+    fontSize: 15,
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 5
+  },
   text: {
     color: "white",
     fontSize: 30,
     padding: 20
+  },
+  bottomButton: {
+    flex: 0,
+    alignItems: "center"
   }
 });
