@@ -68,7 +68,6 @@ export default class LoginScreen extends Component {
   uploadReferenceImage = () => {
     console.log("UPLOADING");
     this.setState({ visible: true });
-    // this.state.image.uri.replace("file://", "");
     let file =
       Platform.OS === "android"
         ? this.state.image.uri
@@ -117,7 +116,11 @@ export default class LoginScreen extends Component {
       })
       .catch(error => {
         console.log(error);
-        alert("Problem with sign up");
+        if (error.code === "UsernameExistsException") {
+          alert(error.message);
+        } else {
+          alert("Problem with sign up");
+        }
       });
   };
 
@@ -197,20 +200,20 @@ export default class LoginScreen extends Component {
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.username}
-                      onChangeText={username => this.setState({ username })}
+                      onChangeText={username => {
+                        if (username.includes("-")) {
+                          alert("Username can not contain hyphens.");
+                        } else {
+                          this.setState({ username });
+                        }
+                      }}
                       placeholder={"Username"}
                       placeholderTextColor={"turquoise"}
                     />
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
-                      onChangeText={password => {
-                        if (password.includes("-")) {
-                          console.log("Password cannot contain hyphens");
-                        } else {
-                          this.setState({ password });
-                        }
-                      }}
+                      onChangeText={password => this.setState({ password })}
                       placeholder={"password"}
                       placeholderTextColor={"turquoise"}
                       secureTextEntry={true}
