@@ -18,7 +18,16 @@ const styles = StyleSheet.create({
     padding: 14,
     width: 350,
     borderRadius: 15,
-    alignItems: "center"
+    alignItems: "center",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 9
+    },
+    shadowOpacity: 0.48,
+    shadowRadius: 11.95,
+
+    elevation: 18
   },
   text: {
     textAlign: "center",

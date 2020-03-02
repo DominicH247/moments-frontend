@@ -127,9 +127,9 @@ export default class LoginScreen extends Component {
 
   signIn = () => {
     Auth.signIn(this.state.username, this.state.password).then(response => {
+      console.log(response);
       this.setState({
         hasSignedIn: true,
-        username: "",
         password: "",
         email: "",
         code: ""
@@ -139,7 +139,7 @@ export default class LoginScreen extends Component {
 
   signOut = () => {
     Auth.signOut().then(response => {
-      this.setState({ hasSignedIn: false });
+      this.setState({ hasSignedIn: false, username: "" });
     });
   };
 
@@ -280,7 +280,8 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     fontSize: 30,
-    padding: 20
+    padding: 20,
+    textAlign: "center"
   },
   smallText: {
     textAlign: "center",
