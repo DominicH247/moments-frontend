@@ -103,7 +103,6 @@ export default class LoginScreen extends Component {
       attributes: { email: this.state.email }
     })
       .then(response => {
-        console.log(response, "<<<<<< sign up");
         this.setState({ hasSignedUp: true });
         data = { usr: response.user.username };
         axios
