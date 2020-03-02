@@ -65,6 +65,16 @@ class LinksScreen extends Component {
     });
   };
 
+  changeActiveUser = () => {
+    const data = { usr: this.state.username };
+    console.log(data);
+    axios
+      .patch(`https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/activeuser/`, data)
+      .then(response => {
+        console.log(response);
+      });
+  };
+
   componentWillUnmount() {
     this.isMounted = false;
   }
@@ -97,7 +107,7 @@ class LinksScreen extends Component {
           </View>
         </ScrollView>
         <View style={styles.bottomButton}>
-          <StyledDarkButton text="Frame My Moments" />
+          <StyledDarkButton text="Frame My Moments" onPress={this.changeActiveUser} />
         </View>
       </View>
     );
