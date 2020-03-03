@@ -130,21 +130,6 @@ class HomeScreen extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          {this.state.topView && (
-            <View style={styles.topContainer}>
-              <Text style={styles.topTitle}>Welcome to moments</Text>
-              <Text style={styles.topText}>
-                This app allows you to control what is displayed on your pi frame, get started by
-                selecting one or more images below.
-              </Text>
-              {/* <Ionicons
-                name="md-checkmark-circle"
-                size="40"
-                color="white"
-                onPress={() => this.setState({ topView: false })}
-              /> */}
-            </View>
-          )}
           <View>
             <Text style={styles.text}>Please Select Images</Text>
           </View>
@@ -215,6 +200,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#2F2F2F"
+    // backgroundColor: "#3EC4CA"
   },
   contentContainer: {
     // paddingTop: 30,

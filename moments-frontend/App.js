@@ -7,7 +7,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import useLinking from "./navigation/useLinking";
-import StyledButton from "./components/StyledButton";
 import AppIntroSlider from "react-native-app-intro-slider";
 
 const Stack = createStackNavigator();
@@ -22,7 +21,7 @@ function App(props) {
   const slides = [
     {
       key: "moments1",
-      title: "Moments",
+      title: "Welcome To Moments",
       text: "The Photo Sharing App",
       text2: "Swipe to Get Started",
       image: require("./assets/images/diverse-group.png"),
@@ -42,7 +41,27 @@ function App(props) {
     },
     {
       key: "moments3",
-      title: "this is a frame with a family",
+      title: "Photos Stored In The Cloud",
+      text: "and go",
+      text2: "to frame",
+      image: require("./assets/images/secure-cloud.png"),
+      height: 300,
+      width: 300,
+      backgroundColor: "#EE562D"
+    },
+    {
+      key: "moments4",
+      title: "Secure Authentication",
+      text: "and go",
+      text2: "to frame",
+      image: require("./assets/images/facial-recognition.png"),
+      height: 300,
+      width: 300,
+      backgroundColor: "#78CAFA"
+    },
+    {
+      key: "moments5",
+      title: "Enjoy Your Pictures On The Frame",
       text: "Send to Frame!",
       image: require("./assets/images/family-frame.png"),
       height: 270,
@@ -70,7 +89,7 @@ function App(props) {
             width: item.width
           }}
         />
-        <View>
+        <View style={styles.slideText}>
           <Text style={styles.infoText}>{item.text}</Text>
           <Text style={styles.infoText}>{item.text2}</Text>
         </View>
@@ -154,10 +173,14 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   slideTitle: {
-    marginTop: 15,
+    margin: 15,
     fontSize: 45,
     color: "white",
     textAlign: "center"
+  },
+  slideText: {
+    height: 200
+    // marginBottom: 50
   },
   infoText: {
     color: "white",

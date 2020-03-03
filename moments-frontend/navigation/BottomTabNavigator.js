@@ -20,6 +20,7 @@ export default function BottomTabNavigator({ navigation }) {
       fontSize: 30
     }
   });
+
   return (
     <BottomTab.Navigator
       initialRouteName="Home"

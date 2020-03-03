@@ -29,6 +29,7 @@ class LinksScreen extends Component {
           });
       })
       .catch(response => {
+        console.log(response);
         alert("Please Login");
       });
   }
@@ -119,7 +120,8 @@ export default LinksScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    // backgroundColor: "#2F2F2F"
+    backgroundColor: "#ffb92b"
   },
   contentContainer: {
     paddingTop: 30,

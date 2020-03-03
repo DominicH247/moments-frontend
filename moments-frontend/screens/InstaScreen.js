@@ -3,7 +3,6 @@ import { TextInput, View, StyleSheet, ScrollView } from "react-native";
 import StyledButton from "../components/StyledButton";
 import Amplify, { Auth } from "aws-amplify";
 import config from "../aws-exports";
-import { withAuthenticator } from "aws-amplify-react-native";
 import axios from "axios";
 import { Linking } from "react-native";
 import { WebView } from "react-native-webview";

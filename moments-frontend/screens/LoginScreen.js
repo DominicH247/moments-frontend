@@ -97,31 +97,33 @@ export default class LoginScreen extends Component {
   };
 
   signUp = () => {
-    Auth.signUp({
-      username: this.state.username,
-      password: this.state.password,
-      attributes: { email: this.state.email }
-    })
-      .then(response => {
-        this.setState({ hasSignedUp: true });
-        data = { usr: response.user.username };
-        axios
-          .post(
-            `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/createuser/`,
-            data
-          )
-          .then(response => {
-            console.log(response, "Inside axios createUser response");
-          });
+    if (this.state.username !== "" && this.state.email !== "" && this.state.password !== "") {
+      Auth.signUp({
+        username: this.state.username,
+        password: this.state.password,
+        attributes: { email: this.state.email }
       })
-      .catch(error => {
-        console.log(error);
-        if (error.code === "UsernameExistsException") {
-          alert(error.message);
-        } else {
-          alert("Problem with sign up");
-        }
-      });
+        .then(response => {
+          this.setState({ hasSignedUp: true });
+          data = { usr: response.user.username };
+          axios
+            .post(
+              `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/createuser/`,
+              data
+            )
+            .then(response => {
+              console.log(response, "Inside axios createUser response");
+            });
+        })
+        .catch(error => {
+          console.log(error);
+          if (error.code === "UsernameExistsException") {
+            alert(error.message);
+          } else {
+            alert("Problem with sign up");
+          }
+        });
+    }
   };
 
   switchToLogin = () => {
@@ -129,23 +131,37 @@ export default class LoginScreen extends Component {
   };
 
   confirmSignUp = () => {
-    Auth.confirmSignUp(this.state.username, this.state.code).then(response => {
-      this.signIn().then(response => {
-        this.setState({ hasSignedIn: true });
-      });
-    });
+    if (this.state.username !== "" && this.state.code.length === 6) {
+      Auth.confirmSignUp(this.state.username, this.state.code)
+        .then(response => {
+          this.signIn().then(response => {
+            this.setState({ hasSignedIn: true });
+          });
+        })
+        .catch(error => {
+          alert("Please enter correct code");
+        });
+    } else {
+      alert("Code should be 6 numbers");
+    }
   };
 
   signIn = () => {
-    Auth.signIn(this.state.username, this.state.password).then(response => {
-      console.log(response);
-      this.setState({
-        hasSignedIn: true,
-        password: "",
-        email: "",
-        code: ""
-      });
-    });
+    if (this.state.username !== "" && this.state.password !== "") {
+      console.log("here");
+      Auth.signIn(this.state.username, this.state.password)
+        .then(response => {
+          this.setState({
+            hasSignedIn: true,
+            password: "",
+            email: "",
+            code: ""
+          });
+        })
+        .catch(error => {
+          alert(error.message);
+        });
+    }
   };
 
   signOut = () => {
@@ -155,6 +171,7 @@ export default class LoginScreen extends Component {
   };
 
   render() {
+    console.log(this.state);
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
