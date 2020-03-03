@@ -169,7 +169,7 @@ class HomeScreen extends Component {
             )}
           </View>
           {visible && (
-            <View style={styles.container}>
+            <View style={styles.lottie}>
               <LottieView
                 visible={visible}
                 source={require("./orangeLottie.json")}
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white"
   },
-  lottie: { width: 100, height: 100 },
+  lottie: { width: 100, height: 100, marginTop: 25, marginRight: 90 },
   buttonContainerRow: {
     flex: 0,
     flexDirection: "row"
