@@ -1,6 +1,14 @@
 import * as React from "react";
 import { Component } from "react";
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  RefreshControl,
+  TouchableOpacity
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
@@ -12,7 +20,8 @@ class LinksScreen extends Component {
   state = {
     photos: [],
     updated: false,
-    username: ""
+    username: "",
+    refreshing: false
   };
 
   componentDidMount() {
@@ -40,7 +49,7 @@ class LinksScreen extends Component {
         `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload/${this.state.username}`
       )
       .then(response => {
-        this.setState({ photos: response.data.images });
+        this.setState({ photos: response.data.images, refreshing: false });
       });
   };
 
@@ -83,10 +92,21 @@ class LinksScreen extends Component {
     this.isMounted = false;
   }
 
+  onRefresh = () => {
+    this.setState({ refreshing: true });
+    this.updatePhotos();
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+          }
+        >
           <View>
             <Text style={styles.text}>Your Current Images</Text>
           </View>
