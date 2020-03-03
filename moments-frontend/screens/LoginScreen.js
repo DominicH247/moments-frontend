@@ -197,7 +197,7 @@ export default class LoginScreen extends Component {
                   <View style={styles.container}>
                     <LottieView
                       visible={this.state.visible}
-                      source={require("./lottieLoading.json")}
+                      source={require("./orangeLottie.json")}
                       autoPlay
                       loop
                       style={{ height: 200 }}

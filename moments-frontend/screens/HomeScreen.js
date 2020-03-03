@@ -172,7 +172,7 @@ class HomeScreen extends Component {
             <View style={styles.container}>
               <LottieView
                 visible={visible}
-                source={require("./lottieLoading.json")}
+                source={require("./orangeLottie.json")}
                 autoPlay
                 loop
                 style={{ height: 200 }}
