@@ -34,9 +34,7 @@ export default class LoginScreen extends Component {
       .then(response => {
         this.setState({ hasSignedIn: true, username: response.username });
       })
-      .catch(response => {
-        alert("Please Login");
-      });
+      .catch(response => {});
   }
 
   getPermissionAsync = async () => {
@@ -66,7 +64,6 @@ export default class LoginScreen extends Component {
   };
 
   uploadReferenceImage = () => {
-    console.log("UPLOADING");
     this.setState({ visible: true });
     let file =
       Platform.OS === "android"
@@ -87,7 +84,6 @@ export default class LoginScreen extends Component {
         }
       })
       .then(response => {
-        console.log(response);
         this.setState({ image: null, visible: false });
       });
   };
@@ -98,13 +94,14 @@ export default class LoginScreen extends Component {
 
   signUp = () => {
     if (this.state.username !== "" && this.state.email !== "" && this.state.password !== "") {
+      const lowerUsername = this.state.username.toLowerCase();
       Auth.signUp({
-        username: this.state.username,
+        username: lowerUsername,
         password: this.state.password,
         attributes: { email: this.state.email }
       })
         .then(response => {
-          this.setState({ hasSignedUp: true });
+          this.setState({ hasSignedUp: true, username: lowerUsername });
           data = { usr: response.user.username };
           axios
             .post(
@@ -116,11 +113,13 @@ export default class LoginScreen extends Component {
             });
         })
         .catch(error => {
-          console.log(error);
-          if (error.code === "UsernameExistsException") {
+          if (
+            error.code === "UsernameExistsException" ||
+            error.message === "Invalid email address format."
+          ) {
             alert(error.message);
           } else {
-            alert("Problem with sign up");
+            alert("Password must contain more than 6 characters");
           }
         });
     }
@@ -148,7 +147,6 @@ export default class LoginScreen extends Component {
 
   signIn = () => {
     if (this.state.username !== "" && this.state.password !== "") {
-      console.log("here");
       Auth.signIn(this.state.username, this.state.password)
         .then(response => {
           this.setState({
@@ -171,7 +169,6 @@ export default class LoginScreen extends Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -225,14 +222,14 @@ export default class LoginScreen extends Component {
                         }
                       }}
                       placeholder={"Username"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
                       onChangeText={password => this.setState({ password })}
                       placeholder={"password"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                       secureTextEntry={true}
                     />
                     <TextInput
@@ -240,7 +237,7 @@ export default class LoginScreen extends Component {
                       value={this.state.email}
                       onChangeText={email => this.setState({ email })}
                       placeholder={"email"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <StyledButton text="SignUp" onPress={this.signUp} />
                     <TextInput
@@ -248,7 +245,7 @@ export default class LoginScreen extends Component {
                       value={this.state.code}
                       onChangeText={code => this.setState({ code })}
                       placeholder={"Sign Up Code"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <StyledButton text="Confirm Signup Code" onPress={this.confirmSignUp} />
                     <StyledButton text="Log In Instead" onPress={this.switchToLogin} />
@@ -260,14 +257,14 @@ export default class LoginScreen extends Component {
                       value={this.state.username}
                       onChangeText={username => this.setState({ username })}
                       placeholder={"Username"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
                       onChangeText={password => this.setState({ password })}
                       placeholder={"password"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                       secureTextEntry={true}
                     />
                     <StyledButton text="Sign In" onPress={this.signIn} />
@@ -286,7 +283,9 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    // backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
+    // backgroundColor: "#EE562D"
   },
   contentContainer: {
     paddingTop: 30,
@@ -319,11 +318,11 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textAlign: "center",
-    color: "turquoise",
+    color: "white",
     fontSize: 15,
     paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
     paddingBottom: 5
   }
 });

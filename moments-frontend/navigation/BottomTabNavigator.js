@@ -6,7 +6,6 @@ import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
 import SocialsScreen from "../screens/SocialsScreen";
 import LoginScreen from "../screens/LoginScreen";
-import InstaScreen from "../screens/InstaScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -15,7 +14,7 @@ export default function BottomTabNavigator({ navigation }) {
     headerTitle: "Moments",
     headerStyle: styles.nav,
     headerTitleStyle: {
-      color: "white",
+      color: "#626060",
       fontWeight: "bold",
       fontSize: 30
     }
@@ -23,8 +22,8 @@ export default function BottomTabNavigator({ navigation }) {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: "black", style: styles.nav }}
+      initialRouteName="Login/Signup"
+      tabBarOptions={{ activeTintColor: "#46C1D5", style: styles.nav }}
     >
       <BottomTab.Screen
         color="red"
@@ -69,7 +68,7 @@ export default function BottomTabNavigator({ navigation }) {
 
 const styles = StyleSheet.create({
   nav: {
-    backgroundColor: "#3EC4CA",
+    backgroundColor: "#FFFFFF",
     borderWidth: 0
   }
 });

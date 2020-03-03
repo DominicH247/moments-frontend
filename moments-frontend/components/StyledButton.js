@@ -14,7 +14,7 @@ const StyledButton = props => {
 const styles = StyleSheet.create({
   button: {
     margin: 8,
-    backgroundColor: "#3EC4CA",
+    backgroundColor: "#FFFFFF",
     padding: 14,
     width: 270,
     borderRadius: 15,
@@ -24,13 +24,13 @@ const styles = StyleSheet.create({
       width: 0,
       height: 9
     },
-    shadowOpacity: 0.48,
-    shadowRadius: 11.95,
-    elevation: 18
+    shadowOpacity: 0.18,
+    shadowRadius: 6.95,
+    elevation: 10
   },
   text: {
     textAlign: "center",
-    color: "white",
+    color: "#626060",
     fontSize: 20
   }
 });

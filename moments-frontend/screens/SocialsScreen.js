@@ -5,6 +5,7 @@ import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
 import Amplify, { Auth } from "aws-amplify";
+import LottieView from "lottie-react-native";
 
 class SocialsScreen extends Component {
   state = {
@@ -12,7 +13,8 @@ class SocialsScreen extends Component {
     instaPhotos: [],
     valid: true,
     reason: "Invalid Input",
-    username: ""
+    username: "",
+    visible: false
   };
 
   componentDidMount() {
@@ -55,8 +57,8 @@ class SocialsScreen extends Component {
   };
 
   uploadMultipleImages = () => {
+    this.setState({ visible: true });
     const selectedFiles = this.state.instaPhotos;
-
     selectedFiles.map(url => {
       axios
         .patch(
@@ -64,7 +66,7 @@ class SocialsScreen extends Component {
           { photos: url }
         )
         .then(response => {
-          this.setState({ instaPhotos: [] });
+          this.setState({ instaPhotos: [], visible: false });
         });
     });
   };
@@ -85,7 +87,6 @@ class SocialsScreen extends Component {
           <View>
             <Text style={styles.text}>Get Your Photos from Social Media</Text>
           </View>
-
           {this.state.instaPhotos.length === 0 && (
             <>
               <View style={styles.buttonContainer}>
@@ -107,8 +108,7 @@ class SocialsScreen extends Component {
               </View>
             </>
           )}
-
-          {this.state.instaPhotos.length > 0 && (
+          {this.state.instaPhotos.length > 0 && !this.state.visible && (
             <>
               <View style={styles.buttonContainer}>
                 <Text style={styles.smallText}>
@@ -128,10 +128,15 @@ class SocialsScreen extends Component {
               </View>
             </>
           )}
-
-          {!this.state.valid && (
-            <View>
-              <Text style={styles.text}>{this.state.reason}</Text>
+          {this.state.visible && (
+            <View style={styles.container}>
+              <LottieView
+                visible={this.state.visible}
+                source={require("./lottieLoading.json")}
+                autoPlay
+                loop
+                style={{ height: 200 }}
+              />
             </View>
           )}
         </ScrollView>
@@ -151,7 +156,8 @@ export default SocialsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    // backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
     // backgroundColor: "#f4858e"
   },
   contentContainer: {
@@ -186,7 +192,7 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textAlign: "center",
-    color: "turquoise",
+    color: "white",
     fontSize: 15,
     paddingTop: 20,
     paddingLeft: 20,

@@ -56,6 +56,9 @@ class LinksScreen extends Component {
       )
       .then(response => {
         console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
       });
     // remove from state
     this.setState(currentState => {
@@ -121,7 +124,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // backgroundColor: "#2F2F2F"
-    backgroundColor: "#ffb92b"
+    backgroundColor: "#3EC4CA"
+    // backgroundColor: "#ffb92b"
   },
   contentContainer: {
     paddingTop: 30,

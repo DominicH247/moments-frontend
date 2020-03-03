@@ -140,9 +140,7 @@ class HomeScreen extends Component {
             </>
             {this.state.image.length === 1 && !visible && (
               <>
-                <Text style={styles.smallText}>
-                  Tap photos to remove them from your selection before uploading to your frame
-                </Text>
+                <Text style={styles.smallText}>Tap photos to unselect</Text>
                 <TouchableOpacity onPress={() => this.removeImage(this.state.image[0].uri)}>
                   <Image
                     style={styles.photoContainer}
@@ -152,22 +150,22 @@ class HomeScreen extends Component {
               </>
             )}
             {this.state.image.length > 1 && !visible && (
-              <View style={styles.smallPhotoContainer}>
-                <Text style={styles.smallText}>
-                  Tap photos to remove them from your selection before uploading to your frame
-                </Text>
-                {this.state.image.reverse().map(item => {
-                  return (
-                    <TouchableOpacity key={item.uri} onPress={() => this.removeImage(item.uri)}>
-                      <Image
-                        key={item.uri}
-                        style={styles.onePhoto}
-                        source={{ uri: item.uri }}
-                      ></Image>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+              <>
+                <Text style={styles.smallText}>Tap photos to unselect</Text>
+                <View style={styles.smallPhotoContainer}>
+                  {this.state.image.reverse().map(item => {
+                    return (
+                      <TouchableOpacity key={item.uri} onPress={() => this.removeImage(item.uri)}>
+                        <Image
+                          key={item.uri}
+                          style={styles.onePhoto}
+                          source={{ uri: item.uri }}
+                        ></Image>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
             )}
           </View>
           {visible && (
@@ -199,8 +197,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
-    // backgroundColor: "#3EC4CA"
+    // backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
   },
   contentContainer: {
     // paddingTop: 30,
@@ -274,8 +272,8 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textAlign: "center",
-    color: "turquoise",
-    fontSize: 15,
+    color: "white",
+    fontSize: 20,
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
