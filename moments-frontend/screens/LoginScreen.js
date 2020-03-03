@@ -194,7 +194,7 @@ export default class LoginScreen extends Component {
                   </>
                 )}
                 {this.state.visible && (
-                  <View style={styles.container}>
+                  <View style={styles.lottie}>
                     <LottieView
                       visible={this.state.visible}
                       source={require("./orangeLottie.json")}
@@ -298,6 +298,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250
   },
+  lottie: { marginTop: 25 },
   inputBox: {
     padding: 10,
     color: "white",
