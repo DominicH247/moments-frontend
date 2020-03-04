@@ -70,10 +70,7 @@ class LinksScreen extends Component {
   };
 
   deleteImageFromDB = url => {
-    console.log(url);
-    // remove from DB
     const data = { url: url };
-    // console.log(data);
     axios
       .post(
         `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/images/${this.state.username}`,
@@ -90,13 +87,13 @@ class LinksScreen extends Component {
       const survivingPhotos = currentState.photos.filter(photo => {
         return photo !== url;
       });
+      survivingPhotos.reverse();
       return { photos: survivingPhotos };
     });
   };
 
   changeActiveUser = () => {
     const data = { usr: this.state.username };
-    console.log(data);
     axios
       .patch(`https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/activeuser/`, data)
       .then(response => {

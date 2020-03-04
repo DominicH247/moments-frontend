@@ -105,6 +105,7 @@ class HomeScreen extends Component {
       const survivingImages = currentState.image.filter(image => {
         return image.uri !== uri;
       });
+      survivingImages.reverse();
       return { image: survivingImages };
     });
   };
