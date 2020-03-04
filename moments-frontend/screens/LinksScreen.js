@@ -5,6 +5,7 @@ import {
   Text,
   View,
   Image,
+  Modal,
   Button,
   RefreshControl,
   TouchableOpacity
@@ -21,7 +22,8 @@ class LinksScreen extends Component {
     photos: [],
     updated: false,
     username: "",
-    refreshing: false
+    refreshing: false,
+    modalVisible: true
   };
 
   componentDidMount() {
@@ -49,8 +51,18 @@ class LinksScreen extends Component {
         `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/upload/${this.state.username}`
       )
       .then(response => {
-        this.setState({ photos: response.data.images, refreshing: false });
+        this.setState({ photos: response.data.images });
+        setTimeout(() => {
+          this.setTimePassed();
+        }, 3000);
+      })
+      .catch(error => {
+        console.log(error);
       });
+  };
+
+  setTimePassed = () => {
+    this.setState({ refreshing: false });
   };
 
   deleteImageFromDB = url => {
@@ -112,9 +124,10 @@ class LinksScreen extends Component {
           </View>
 
           <View style={styles.top}>
-            <StyledButton text="Update Photos" onPress={this.updatePhotos} />
             {this.state.photos.length > 0 && (
-              <Text style={styles.smallText}>Tap photos to remove them from your frame</Text>
+              <Text style={styles.smallText}>
+                Tap photos to remove them from your frame Pull down to refresh images
+              </Text>
             )}
           </View>
 
@@ -176,7 +189,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontSize: 15,
-    padding: 20
+    paddingTop: 10,
+    paddingLeft: 50,
+    paddingRight: 50
   },
   bottomButton: {
     flex: 0,

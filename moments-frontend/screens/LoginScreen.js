@@ -1,7 +1,17 @@
 import React, { Component } from "react";
-import { TextInput, View, StyleSheet, ScrollView, Text, Image } from "react-native";
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Image,
+  Modal,
+  TouchableHighlight
+} from "react-native";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
+import StyledAlertButton from "../components/StyledAlertButton";
 import Amplify, { Auth } from "aws-amplify";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
@@ -9,6 +19,7 @@ import LottieView from "lottie-react-native";
 import Constants from "expo-constants";
 import config from "../aws-exports";
 import axios from "axios";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 Amplify.configure(config);
 
@@ -24,7 +35,9 @@ export default class LoginScreen extends Component {
     code: "",
     hasSignedUp: false,
     needsToSignUp: false,
-    hasSignedIn: false
+    hasSignedIn: false,
+    modalVisible: true,
+    modalMessage: "No Errors Yet"
   };
 
   componentDidMount() {
@@ -117,9 +130,12 @@ export default class LoginScreen extends Component {
             error.code === "UsernameExistsException" ||
             error.message === "Invalid email address format."
           ) {
-            alert(error.message);
+            this.setState({ modalVisible: true, modalMessage: error.message });
           } else {
-            alert("Password must contain more than 6 characters");
+            this.setState({
+              modalVisible: true,
+              modalMessage: "Password must contain more than 6 characters"
+            });
           }
         });
     }
@@ -138,10 +154,10 @@ export default class LoginScreen extends Component {
           });
         })
         .catch(error => {
-          alert("Please enter correct code");
+          this.setState({ modalVisible: true, modalMessage: "Please Enter Correct Code" });
         });
     } else {
-      alert("Code should be 6 numbers");
+      this.setState({ modalVisible: true, modalMessage: "Code Should Be 6 Numbers" });
     }
   };
 
@@ -157,7 +173,7 @@ export default class LoginScreen extends Component {
           });
         })
         .catch(error => {
-          alert(error.message);
+          this.setState({ modalVisible: true, modalMessage: error.message });
         });
     }
   };
@@ -169,9 +185,50 @@ export default class LoginScreen extends Component {
   };
 
   render() {
+    console.log(this.state.modalMessage);
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View
+              style={{
+                flex: 0,
+                width: 350,
+                height: 300,
+                marginTop: 250,
+                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "space-around",
+                backgroundColor: "white",
+                borderRadius: 25
+              }}
+            >
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+
           <View style={styles.buttonContainerColumn}>
             {this.state.hasSignedIn ? (
               <>
