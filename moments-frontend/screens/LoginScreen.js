@@ -36,7 +36,7 @@ export default class LoginScreen extends Component {
     hasSignedUp: false,
     needsToSignUp: false,
     hasSignedIn: false,
-    modalVisible: true,
+    modalVisible: false,
     modalMessage: "No Errors Yet"
   };
 
@@ -340,9 +340,7 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#2F2F2F"
     backgroundColor: "#3EC4CA"
-    // backgroundColor: "#EE562D"
   },
   contentContainer: {
     paddingTop: 30,
