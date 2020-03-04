@@ -72,7 +72,10 @@ class HomeScreen extends Component {
           return { image: [...currentState.image, result] };
         });
       } else {
-        alert("Please upload photos before choosing more");
+        this.setState({
+          modalVisible: true,
+          modalMessage: "Please upload photos before choosing more"
+        });
       }
     }
   };
@@ -89,7 +92,10 @@ class HomeScreen extends Component {
           return { image: [...currentState.image, result] };
         });
       } else {
-        alert("Please upload photos before choosing more");
+        this.setState({
+          modalVisible: true,
+          modalMessage: "Please upload photos before choosing more"
+        });
       }
     }
   };
