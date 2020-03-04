@@ -1,5 +1,14 @@
 import * as React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  Modal,
+  TouchableHighlight
+} from "react-native";
 import { Icon } from "react-native-elements";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Component } from "react";
@@ -9,6 +18,7 @@ import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
+import StyledAlertButton from "../components/StyledAlertButton";
 import LottieView from "lottie-react-native";
 import Amplify, { Auth } from "aws-amplify";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,7 +29,9 @@ class HomeScreen extends Component {
     image: [],
     uploaded: true,
     visible: false,
-    username: ""
+    username: "",
+    modalVisible: false,
+    modalMessage: "No Errors Yet"
   };
 
   componentDidMount() {
@@ -29,7 +41,7 @@ class HomeScreen extends Component {
         this.setState({ username: response.username });
       })
       .catch(response => {
-        alert("Please Login");
+        this.setState({ modalVisible: true, modalMessage: "Please Login" });
       });
   }
 
@@ -130,6 +142,46 @@ class HomeScreen extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View
+              style={{
+                flex: 0,
+                width: 350,
+                height: 300,
+                marginTop: 140,
+                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "space-around",
+                backgroundColor: "white",
+                borderRadius: 25
+              }}
+            >
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+
           <View>
             <Text style={styles.text}>Please Select Images</Text>
           </View>

@@ -8,13 +8,17 @@ import {
   Modal,
   Button,
   RefreshControl,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
+  TouchableHighlight
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
+import StyledAlertButton from "../components/StyledAlertButton";
 import Amplify, { Auth } from "aws-amplify";
+import LottieView from "lottie-react-native";
 
 class LinksScreen extends Component {
   isMounted = false;
@@ -23,7 +27,8 @@ class LinksScreen extends Component {
     updated: false,
     username: "",
     refreshing: false,
-    modalVisible: true
+    modalVisible: false,
+    modalMessage: "No Errors Yet"
   };
 
   componentDidMount() {
@@ -40,8 +45,7 @@ class LinksScreen extends Component {
           });
       })
       .catch(response => {
-        console.log(response);
-        alert("Please Login");
+        this.setState({ modalVisible: true, modalMessage: "Please Login" });
       });
   }
 
@@ -119,6 +123,46 @@ class LinksScreen extends Component {
             <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
           }
         >
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View
+              style={{
+                flex: 0,
+                width: 350,
+                height: 300,
+                marginTop: 150,
+                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "space-around",
+                backgroundColor: "white",
+                borderRadius: 25
+              }}
+            >
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+
           <View>
             <Text style={styles.text}>Your Current Images</Text>
           </View>
