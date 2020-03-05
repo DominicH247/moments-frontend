@@ -7,7 +7,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import useLinking from "./navigation/useLinking";
-import StyledButton from "./components/StyledButton";
 import AppIntroSlider from "react-native-app-intro-slider";
 
 const Stack = createStackNavigator();
@@ -22,7 +21,7 @@ function App(props) {
   const slides = [
     {
       key: "moments1",
-      title: "Moments",
+      title: "Welcome To Moments",
       text: "The Photo Sharing App",
       text2: "Swipe to Get Started",
       image: require("./assets/images/diverse-group.png"),
@@ -32,9 +31,9 @@ function App(props) {
     },
     {
       key: "moments2",
-      title: "This man has a phone",
-      text: "Take a photo",
-      text2: "Upload",
+      title: "Upload Photos From Your Mobile Device",
+      text: "Works on ios or Android",
+      text2: "Connects to social media",
       image: require("./assets/images/man-phone.png"),
       height: 300,
       width: 300,
@@ -42,8 +41,29 @@ function App(props) {
     },
     {
       key: "moments3",
-      title: "this is a frame with a family",
-      text: "Send to Frame!",
+      title: "Photos Stored Seamlessly In The Cloud",
+      text: "Secure storage",
+      text2: "for your photos",
+      image: require("./assets/images/secure-cloud.png"),
+      height: 300,
+      width: 300,
+      backgroundColor: "#EE562D"
+    },
+    {
+      key: "moments4",
+      title: "Secure Facial Recognition",
+      text: "Personalised display shows",
+      text2: "photos from your account",
+      image: require("./assets/images/facial-recognition.png"),
+      height: 300,
+      width: 300,
+      backgroundColor: "#78CAFA"
+    },
+    {
+      key: "moments5",
+      title: "Enjoy Your Pictures On The Frame",
+      text: "Share photos effortlessly around",
+      text2: "the home or with relatives",
       image: require("./assets/images/family-frame.png"),
       height: 270,
       width: 350,
@@ -52,7 +72,6 @@ function App(props) {
   ];
 
   _renderItem = ({ item }) => {
-    console.log(item);
     return (
       <View
         style={{
@@ -70,7 +89,7 @@ function App(props) {
             width: item.width
           }}
         />
-        <View>
+        <View style={styles.slideText}>
           <Text style={styles.infoText}>{item.text}</Text>
           <Text style={styles.infoText}>{item.text2}</Text>
         </View>
@@ -81,23 +100,13 @@ function App(props) {
     setShowApp(true);
   };
 
-  // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHide();
-
-        // Load our initial navigation state
         setInitialNavigationState(await getInitialState());
-
-        // Load fonts
-        await Font.loadAsync({
-          ...Ionicons.font,
-          "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
-        });
-      } catch (e) {
-        // We might want to provide this error information to an error reporting service
-        console.warn(e);
+      } catch (error) {
+        console.warn(error);
       } finally {
         setLoadingComplete(true);
         SplashScreen.hide();
@@ -154,10 +163,13 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   slideTitle: {
-    marginTop: 15,
+    margin: 15,
     fontSize: 45,
     color: "white",
     textAlign: "center"
+  },
+  slideText: {
+    height: 200
   },
   infoText: {
     color: "white",

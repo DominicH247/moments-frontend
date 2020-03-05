@@ -1,10 +1,22 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Modal,
+  TouchableHighlight
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
-import Amplify, { Auth } from "aws-amplify";
+import { Auth } from "aws-amplify";
+import LottieView from "lottie-react-native";
+import StyledAlertButton from "../components/StyledAlertButton";
 
 class SocialsScreen extends Component {
   state = {
@@ -12,7 +24,9 @@ class SocialsScreen extends Component {
     instaPhotos: [],
     valid: true,
     reason: "Invalid Input",
-    username: ""
+    username: "",
+    visible: false,
+    modalVisible: false
   };
 
   componentDidMount() {
@@ -21,7 +35,7 @@ class SocialsScreen extends Component {
         this.setState({ username: response.username });
       })
       .catch(response => {
-        alert("Please Login");
+        this.setState({ modalVisible: true, modalMessage: "Please Login" });
       });
   }
 
@@ -55,8 +69,8 @@ class SocialsScreen extends Component {
   };
 
   uploadMultipleImages = () => {
+    this.setState({ visible: true });
     const selectedFiles = this.state.instaPhotos;
-
     selectedFiles.map(url => {
       axios
         .patch(
@@ -64,7 +78,7 @@ class SocialsScreen extends Component {
           { photos: url }
         )
         .then(response => {
-          this.setState({ instaPhotos: [] });
+          this.setState({ instaPhotos: [], visible: false });
         });
     });
   };
@@ -82,10 +96,48 @@ class SocialsScreen extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View
+              style={{
+                flex: 0,
+                width: 350,
+                height: 300,
+                marginTop: 150,
+                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "space-around",
+                backgroundColor: "white",
+                borderRadius: 25
+              }}
+            >
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
           <View>
             <Text style={styles.text}>Get Your Photos from Social Media</Text>
           </View>
-
           {this.state.instaPhotos.length === 0 && (
             <>
               <View style={styles.buttonContainer}>
@@ -107,8 +159,7 @@ class SocialsScreen extends Component {
               </View>
             </>
           )}
-
-          {this.state.instaPhotos.length > 0 && (
+          {this.state.instaPhotos.length > 0 && !this.state.visible && (
             <>
               <View style={styles.buttonContainer}>
                 <Text style={styles.smallText}>
@@ -128,10 +179,15 @@ class SocialsScreen extends Component {
               </View>
             </>
           )}
-
-          {!this.state.valid && (
-            <View>
-              <Text style={styles.text}>{this.state.reason}</Text>
+          {this.state.visible && (
+            <View style={styles.container}>
+              <LottieView
+                visible={this.state.visible}
+                source={require("./orangeLottie.json")}
+                autoPlay
+                loop
+                style={{ height: 200 }}
+              />
             </View>
           )}
         </ScrollView>
@@ -151,7 +207,7 @@ export default SocialsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
   },
   contentContainer: {
     paddingTop: 30,
@@ -185,7 +241,7 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textAlign: "center",
-    color: "turquoise",
+    color: "white",
     fontSize: 15,
     paddingTop: 20,
     paddingLeft: 20,

@@ -1,7 +1,15 @@
 import * as React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
-import { Icon } from "react-native-elements";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  Modal,
+  TouchableHighlight
+} from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { Component } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
@@ -9,9 +17,9 @@ import * as Permissions from "expo-permissions";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
+import StyledAlertButton from "../components/StyledAlertButton";
 import LottieView from "lottie-react-native";
-import Amplify, { Auth } from "aws-amplify";
-import { Ionicons } from "@expo/vector-icons";
+import { Auth } from "aws-amplify";
 
 class HomeScreen extends Component {
   state = {
@@ -19,7 +27,9 @@ class HomeScreen extends Component {
     image: [],
     uploaded: true,
     visible: false,
-    username: ""
+    username: "",
+    modalVisible: false,
+    modalMessage: "No Errors Yet"
   };
 
   componentDidMount() {
@@ -29,7 +39,7 @@ class HomeScreen extends Component {
         this.setState({ username: response.username });
       })
       .catch(response => {
-        alert("Please Login");
+        this.setState({ modalVisible: true, modalMessage: "Please Login" });
       });
   }
 
@@ -37,12 +47,10 @@ class HomeScreen extends Component {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
-        // alert("Accept camera roll permissions to make this work!");
       }
 
       const { status2 } = await Permissions.askAsync(Permissions.CAMERA);
       if (status2 !== "granted") {
-        // alert("Accept camera permissions to make this work!");
       }
     }
   };
@@ -60,7 +68,10 @@ class HomeScreen extends Component {
           return { image: [...currentState.image, result] };
         });
       } else {
-        alert("Please upload photos before choosing more");
+        this.setState({
+          modalVisible: true,
+          modalMessage: "Please upload photos before choosing more"
+        });
       }
     }
   };
@@ -77,7 +88,10 @@ class HomeScreen extends Component {
           return { image: [...currentState.image, result] };
         });
       } else {
-        alert("Please upload photos before choosing more");
+        this.setState({
+          modalVisible: true,
+          modalMessage: "Please upload photos before choosing more"
+        });
       }
     }
   };
@@ -130,21 +144,46 @@ class HomeScreen extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          {this.state.topView && (
-            <View style={styles.topContainer}>
-              <Text style={styles.topTitle}>Welcome to moments</Text>
-              <Text style={styles.topText}>
-                This app allows you to control what is displayed on your pi frame, get started by
-                selecting one or more images below.
-              </Text>
-              {/* <Ionicons
-                name="md-checkmark-circle"
-                size="40"
-                color="white"
-                onPress={() => this.setState({ topView: false })}
-              /> */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View
+              style={{
+                flex: 0,
+                width: 350,
+                height: 300,
+                marginTop: 140,
+                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "space-around",
+                backgroundColor: "white",
+                borderRadius: 25
+              }}
+            >
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
             </View>
-          )}
+          </Modal>
+
           <View>
             <Text style={styles.text}>Please Select Images</Text>
           </View>
@@ -155,9 +194,7 @@ class HomeScreen extends Component {
             </>
             {this.state.image.length === 1 && !visible && (
               <>
-                <Text style={styles.smallText}>
-                  Tap photos to remove them from your selection before uploading to your frame
-                </Text>
+                <Text style={styles.smallText}>Tap photos to unselect</Text>
                 <TouchableOpacity onPress={() => this.removeImage(this.state.image[0].uri)}>
                   <Image
                     style={styles.photoContainer}
@@ -167,29 +204,29 @@ class HomeScreen extends Component {
               </>
             )}
             {this.state.image.length > 1 && !visible && (
-              <View style={styles.smallPhotoContainer}>
-                <Text style={styles.smallText}>
-                  Tap photos to remove them from your selection before uploading to your frame
-                </Text>
-                {this.state.image.reverse().map(item => {
-                  return (
-                    <TouchableOpacity key={item.uri} onPress={() => this.removeImage(item.uri)}>
-                      <Image
-                        key={item.uri}
-                        style={styles.onePhoto}
-                        source={{ uri: item.uri }}
-                      ></Image>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+              <>
+                <Text style={styles.smallText}>Tap photos to unselect</Text>
+                <View style={styles.smallPhotoContainer}>
+                  {this.state.image.reverse().map(item => {
+                    return (
+                      <TouchableOpacity key={item.uri} onPress={() => this.removeImage(item.uri)}>
+                        <Image
+                          key={item.uri}
+                          style={styles.onePhoto}
+                          source={{ uri: item.uri }}
+                        ></Image>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
             )}
           </View>
           {visible && (
-            <View style={styles.container}>
+            <View style={styles.lottie}>
               <LottieView
                 visible={visible}
-                source={require("./lottieLoading.json")}
+                source={require("./orangeLottie.json")}
                 autoPlay
                 loop
                 style={{ height: 200 }}
@@ -200,7 +237,7 @@ class HomeScreen extends Component {
         {this.state.image.length > 0 && (
           <>
             <View style={styles.bottomButton}>
-              <StyledDarkButton text="Send To Frame" onPress={this.uploadImage} />
+              <StyledDarkButton text="Upload Photos" onPress={this.uploadImage} />
             </View>
           </>
         )}
@@ -214,20 +251,16 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
   },
   contentContainer: {
-    // paddingTop: 30,
     alignItems: "center"
   },
   topContainer: {
     backgroundColor: "#0F4B53",
     height: 200,
     width: 450,
-    // flexDirection: "row",
-    // flexWrap: "wrap",
     alignItems: "center",
-    // justifyContent: "space-around"
     shadowOffset: {
       width: 0,
       height: 2
@@ -256,7 +289,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white"
   },
-  lottie: { width: 100, height: 100 },
+  lottie: { width: 100, height: 100, marginTop: 25, marginRight: 90 },
   buttonContainerRow: {
     flex: 0,
     flexDirection: "row"
@@ -288,8 +321,8 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textAlign: "center",
-    color: "turquoise",
-    fontSize: 15,
+    color: "white",
+    fontSize: 20,
     paddingTop: 20,
     paddingLeft: 20,
     paddingRight: 20,

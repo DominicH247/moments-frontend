@@ -1,7 +1,17 @@
 import React, { Component } from "react";
-import { TextInput, View, StyleSheet, ScrollView, Text, Image } from "react-native";
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Image,
+  Modal,
+  TouchableHighlight
+} from "react-native";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
+import StyledAlertButton from "../components/StyledAlertButton";
 import Amplify, { Auth } from "aws-amplify";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
@@ -24,7 +34,10 @@ export default class LoginScreen extends Component {
     code: "",
     hasSignedUp: false,
     needsToSignUp: false,
-    hasSignedIn: false
+    hasSignedIn: false,
+    modalVisible: false,
+    modalVisibleSignUp: false,
+    modalMessage: "No Errors Yet"
   };
 
   componentDidMount() {
@@ -34,21 +47,17 @@ export default class LoginScreen extends Component {
       .then(response => {
         this.setState({ hasSignedIn: true, username: response.username });
       })
-      .catch(response => {
-        alert("Please Login");
-      });
+      .catch(response => {});
   }
 
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
-        // alert("Accept camera roll permissions to make this work!");
       }
 
       const { status2 } = await Permissions.askAsync(Permissions.CAMERA);
       if (status2 !== "granted") {
-        // alert("Accept camera permissions to make this work!");
       }
     }
   };
@@ -66,7 +75,6 @@ export default class LoginScreen extends Component {
   };
 
   uploadReferenceImage = () => {
-    console.log("UPLOADING");
     this.setState({ visible: true });
     let file =
       Platform.OS === "android"
@@ -87,7 +95,6 @@ export default class LoginScreen extends Component {
         }
       })
       .then(response => {
-        console.log(response);
         this.setState({ image: null, visible: false });
       });
   };
@@ -97,31 +104,44 @@ export default class LoginScreen extends Component {
   };
 
   signUp = () => {
-    Auth.signUp({
-      username: this.state.username,
-      password: this.state.password,
-      attributes: { email: this.state.email }
-    })
-      .then(response => {
-        this.setState({ hasSignedUp: true });
-        data = { usr: response.user.username };
-        axios
-          .post(
-            `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/createuser/`,
-            data
-          )
-          .then(response => {
-            console.log(response, "Inside axios createUser response");
-          });
+    if (this.state.username !== "" && this.state.email !== "" && this.state.password !== "") {
+      const lowerUsername = this.state.username.toLowerCase();
+      Auth.signUp({
+        username: lowerUsername,
+        password: this.state.password,
+        attributes: { email: this.state.email }
       })
-      .catch(error => {
-        console.log(error);
-        if (error.code === "UsernameExistsException") {
-          alert(error.message);
-        } else {
-          alert("Problem with sign up");
-        }
-      });
+        .then(response => {
+          this.setState({
+            hasSignedUp: true,
+            username: lowerUsername,
+            modalVisibleSignUp: true,
+            modalMessage: "Check email for sign up code"
+          });
+          data = { usr: response.user.username };
+          axios
+            .post(
+              `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/createuser/`,
+              data
+            )
+            .then(response => {
+              console.log(response, "Inside axios createUser response");
+            });
+        })
+        .catch(error => {
+          if (
+            error.code === "UsernameExistsException" ||
+            error.message === "Invalid email address format."
+          ) {
+            this.setState({ modalVisible: true, modalMessage: error.message });
+          } else {
+            this.setState({
+              modalVisible: true,
+              modalMessage: "Password must contain more than 6 characters"
+            });
+          }
+        });
+    }
   };
 
   switchToLogin = () => {
@@ -129,23 +149,36 @@ export default class LoginScreen extends Component {
   };
 
   confirmSignUp = () => {
-    Auth.confirmSignUp(this.state.username, this.state.code).then(response => {
-      this.signIn().then(response => {
-        this.setState({ hasSignedIn: true });
-      });
-    });
+    if (this.state.username !== "" && this.state.code.length === 6) {
+      Auth.confirmSignUp(this.state.username, this.state.code)
+        .then(response => {
+          Auth.signIn(this.state.username, this.state.password).then(response => {
+            this.setState({ hasSignedIn: true });
+          });
+        })
+        .catch(error => {
+          this.setState({ modalVisibleSignUp: true, modalMessage: "Please Enter Correct Code" });
+        });
+    } else {
+      this.setState({ modalVisible: true, modalMessage: "Code Should Be 6 Numbers" });
+    }
   };
 
   signIn = () => {
-    Auth.signIn(this.state.username, this.state.password).then(response => {
-      console.log(response);
-      this.setState({
-        hasSignedIn: true,
-        password: "",
-        email: "",
-        code: ""
-      });
-    });
+    if (this.state.username !== "" && this.state.password !== "") {
+      Auth.signIn(this.state.username, this.state.password)
+        .then(response => {
+          this.setState({
+            hasSignedIn: true,
+            password: "",
+            email: "",
+            code: ""
+          });
+        })
+        .catch(error => {
+          this.setState({ modalVisible: true, modalMessage: error.message });
+        });
+    }
   };
 
   signOut = () => {
@@ -158,10 +191,65 @@ export default class LoginScreen extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={styles.modal}>
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisibleSignUp}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={styles.modal}>
+              <LottieView
+                visible={this.state.modalVisibleSignUp}
+                source={require("./sendMailFast.json")}
+                autoPlay
+                loop
+                style={{ height: 150 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisibleSignUp: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+
           <View style={styles.buttonContainerColumn}>
             {this.state.hasSignedIn ? (
               <>
-                <Text style={styles.text}> Hello {this.state.username} welcome back! </Text>
+                <Text style={styles.text}> Hello {this.state.username} ! </Text>
                 <Text style={styles.smallText}>
                   {" "}
                   In order for your frame to recognise you please take a clear photo of your face
@@ -180,10 +268,10 @@ export default class LoginScreen extends Component {
                   </>
                 )}
                 {this.state.visible && (
-                  <View style={styles.container}>
+                  <View style={styles.lottie}>
                     <LottieView
                       visible={this.state.visible}
-                      source={require("./lottieLoading.json")}
+                      source={require("./orangeLottie.json")}
                       autoPlay
                       loop
                       style={{ height: 200 }}
@@ -208,14 +296,14 @@ export default class LoginScreen extends Component {
                         }
                       }}
                       placeholder={"Username"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
                       onChangeText={password => this.setState({ password })}
                       placeholder={"password"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                       secureTextEntry={true}
                     />
                     <TextInput
@@ -223,7 +311,7 @@ export default class LoginScreen extends Component {
                       value={this.state.email}
                       onChangeText={email => this.setState({ email })}
                       placeholder={"email"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <StyledButton text="SignUp" onPress={this.signUp} />
                     <TextInput
@@ -231,7 +319,7 @@ export default class LoginScreen extends Component {
                       value={this.state.code}
                       onChangeText={code => this.setState({ code })}
                       placeholder={"Sign Up Code"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <StyledButton text="Confirm Signup Code" onPress={this.confirmSignUp} />
                     <StyledButton text="Log In Instead" onPress={this.switchToLogin} />
@@ -243,14 +331,14 @@ export default class LoginScreen extends Component {
                       value={this.state.username}
                       onChangeText={username => this.setState({ username })}
                       placeholder={"Username"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                     />
                     <TextInput
                       style={styles.inputBox}
                       value={this.state.password}
                       onChangeText={password => this.setState({ password })}
                       placeholder={"password"}
-                      placeholderTextColor={"turquoise"}
+                      placeholderTextColor={"#E4E3E3"}
                       secureTextEntry={true}
                     />
                     <StyledButton text="Sign In" onPress={this.signIn} />
@@ -269,10 +357,10 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 15,
     alignItems: "center"
   },
   photoContainer: {
@@ -282,6 +370,18 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250
   },
+  modal: {
+    flex: 0,
+    width: 350,
+    height: 300,
+    marginTop: 200,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: "white",
+    borderRadius: 25
+  },
+  lottie: { marginTop: 25 },
   inputBox: {
     padding: 10,
     color: "white",
@@ -302,11 +402,11 @@ const styles = StyleSheet.create({
   },
   smallText: {
     textAlign: "center",
-    color: "turquoise",
+    color: "white",
     fontSize: 15,
     paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
     paddingBottom: 5
   }
 });
