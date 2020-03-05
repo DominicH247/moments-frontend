@@ -63,7 +63,7 @@ function App(props) {
       key: "moments5",
       title: "Enjoy Your Pictures On The Frame",
       text: "Share photos effortlessly around",
-      text2: "the home or to relatives",
+      text2: "the home or with relatives",
       image: require("./assets/images/family-frame.png"),
       height: 270,
       width: 350,
