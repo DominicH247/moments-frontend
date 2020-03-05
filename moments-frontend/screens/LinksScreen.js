@@ -1,18 +1,32 @@
 import * as React from "react";
 import { Component } from "react";
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Modal,
+  RefreshControl,
+  TouchableOpacity,
+  Alert,
+  TouchableHighlight
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
-import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
-import Amplify, { Auth } from "aws-amplify";
+import StyledAlertButton from "../components/StyledAlertButton";
+import { Auth } from "aws-amplify";
+import LottieView from "lottie-react-native";
 
 class LinksScreen extends Component {
   isMounted = false;
   state = {
     photos: [],
     updated: false,
-    username: ""
+    username: "",
+    refreshing: false,
+    modalVisible: false,
+    modalMessage: "No Errors Yet"
   };
 
   componentDidMount() {
@@ -29,7 +43,7 @@ class LinksScreen extends Component {
           });
       })
       .catch(response => {
-        alert("Please Login");
+        this.setState({ modalVisible: true, modalMessage: "Please Login" });
       });
   }
 
@@ -40,14 +54,21 @@ class LinksScreen extends Component {
       )
       .then(response => {
         this.setState({ photos: response.data.images });
+        setTimeout(() => {
+          this.setTimePassed();
+        }, 3000);
+      })
+      .catch(error => {
+        console.log(error);
       });
   };
 
+  setTimePassed = () => {
+    this.setState({ refreshing: false });
+  };
+
   deleteImageFromDB = url => {
-    console.log(url);
-    // remove from DB
     const data = { url: url };
-    // console.log(data);
     axios
       .post(
         `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/images/${this.state.username}`,
@@ -55,19 +76,21 @@ class LinksScreen extends Component {
       )
       .then(response => {
         console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
       });
-    // remove from state
     this.setState(currentState => {
       const survivingPhotos = currentState.photos.filter(photo => {
         return photo !== url;
       });
+      survivingPhotos.reverse();
       return { photos: survivingPhotos };
     });
   };
 
   changeActiveUser = () => {
     const data = { usr: this.state.username };
-    console.log(data);
     axios
       .patch(`https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/activeuser/`, data)
       .then(response => {
@@ -79,18 +102,70 @@ class LinksScreen extends Component {
     this.isMounted = false;
   }
 
+  onRefresh = () => {
+    this.setState({ refreshing: true });
+    this.updatePhotos();
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+          }
+        >
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View
+              style={{
+                flex: 0,
+                width: 350,
+                height: 300,
+                marginTop: 150,
+                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "space-around",
+                backgroundColor: "white",
+                borderRadius: 25
+              }}
+            >
+              <LottieView
+                visible={this.state.modalVisible}
+                source={require("./errorCross.json")}
+                autoPlay
+                loop
+                style={{ height: 100 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+
           <View>
             <Text style={styles.text}>Your Current Images</Text>
           </View>
 
           <View style={styles.top}>
-            <StyledButton text="Update Photos" onPress={this.updatePhotos} />
             {this.state.photos.length > 0 && (
-              <Text style={styles.smallText}>Tap photos to remove them from your frame</Text>
+              <Text style={styles.smallText}>
+                Tap photos to remove them from your frame Pull down to refresh images
+              </Text>
             )}
           </View>
 
@@ -119,7 +194,7 @@ export default LinksScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2F2F2F"
+    backgroundColor: "#3EC4CA"
   },
   contentContainer: {
     paddingTop: 30,
@@ -150,7 +225,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontSize: 15,
-    padding: 20
+    paddingTop: 10,
+    paddingLeft: 50,
+    paddingRight: 50
   },
   bottomButton: {
     flex: 0,
