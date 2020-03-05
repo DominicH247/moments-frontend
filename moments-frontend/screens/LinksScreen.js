@@ -44,10 +44,7 @@ class LinksScreen extends Component {
   };
 
   deleteImageFromDB = url => {
-    console.log(url);
-    // remove from DB
     const data = { url: url };
-    // console.log(data);
     axios
       .post(
         `https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/images/${this.state.username}`,
@@ -56,7 +53,6 @@ class LinksScreen extends Component {
       .then(response => {
         console.log(response);
       });
-    // remove from state
     this.setState(currentState => {
       const survivingPhotos = currentState.photos.filter(photo => {
         return photo !== url;
@@ -67,7 +63,6 @@ class LinksScreen extends Component {
 
   changeActiveUser = () => {
     const data = { usr: this.state.username };
-    console.log(data);
     axios
       .patch(`https://0cu7huuz9g.execute-api.eu-west-2.amazonaws.com/latest/api/activeuser/`, data)
       .then(response => {
