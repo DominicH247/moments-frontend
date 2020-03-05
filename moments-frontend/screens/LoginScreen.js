@@ -19,7 +19,6 @@ import LottieView from "lottie-react-native";
 import Constants from "expo-constants";
 import config from "../aws-exports";
 import axios from "axios";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 Amplify.configure(config);
 
@@ -37,6 +36,7 @@ export default class LoginScreen extends Component {
     needsToSignUp: false,
     hasSignedIn: false,
     modalVisible: false,
+    modalVisibleSignUp: false,
     modalMessage: "No Errors Yet"
   };
 
@@ -54,12 +54,10 @@ export default class LoginScreen extends Component {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
-        // alert("Accept camera roll permissions to make this work!");
       }
 
       const { status2 } = await Permissions.askAsync(Permissions.CAMERA);
       if (status2 !== "granted") {
-        // alert("Accept camera permissions to make this work!");
       }
     }
   };
@@ -114,7 +112,12 @@ export default class LoginScreen extends Component {
         attributes: { email: this.state.email }
       })
         .then(response => {
-          this.setState({ hasSignedUp: true, username: lowerUsername });
+          this.setState({
+            hasSignedUp: true,
+            username: lowerUsername,
+            modalVisibleSignUp: true,
+            modalMessage: "Check email for sign up code"
+          });
           data = { usr: response.user.username };
           axios
             .post(
@@ -149,12 +152,12 @@ export default class LoginScreen extends Component {
     if (this.state.username !== "" && this.state.code.length === 6) {
       Auth.confirmSignUp(this.state.username, this.state.code)
         .then(response => {
-          this.signIn().then(response => {
+          Auth.signIn(this.state.username, this.state.password).then(response => {
             this.setState({ hasSignedIn: true });
           });
         })
         .catch(error => {
-          this.setState({ modalVisible: true, modalMessage: "Please Enter Correct Code" });
+          this.setState({ modalVisibleSignUp: true, modalMessage: "Please Enter Correct Code" });
         });
     } else {
       this.setState({ modalVisible: true, modalMessage: "Code Should Be 6 Numbers" });
@@ -185,7 +188,6 @@ export default class LoginScreen extends Component {
   };
 
   render() {
-    console.log(this.state.modalMessage);
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -197,19 +199,7 @@ export default class LoginScreen extends Component {
               Alert.alert("Modal has been closed.");
             }}
           >
-            <View
-              style={{
-                flex: 0,
-                width: 350,
-                height: 300,
-                marginTop: 250,
-                alignSelf: "center",
-                alignItems: "center",
-                justifyContent: "space-around",
-                backgroundColor: "white",
-                borderRadius: 25
-              }}
-            >
+            <View style={styles.modal}>
               <LottieView
                 visible={this.state.modalVisible}
                 source={require("./errorCross.json")}
@@ -222,6 +212,33 @@ export default class LoginScreen extends Component {
                 <StyledAlertButton
                   onPress={() => {
                     this.setState({ modalVisible: false });
+                  }}
+                  text={"OK"}
+                ></StyledAlertButton>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisibleSignUp}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={styles.modal}>
+              <LottieView
+                visible={this.state.modalVisibleSignUp}
+                source={require("./sendMailFast.json")}
+                autoPlay
+                loop
+                style={{ height: 150 }}
+              />
+              <Text>{this.state.modalMessage}</Text>
+              <TouchableHighlight>
+                <StyledAlertButton
+                  onPress={() => {
+                    this.setState({ modalVisibleSignUp: false });
                   }}
                   text={"OK"}
                 ></StyledAlertButton>
@@ -343,7 +360,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#3EC4CA"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 15,
     alignItems: "center"
   },
   photoContainer: {
@@ -352,6 +369,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 250,
     height: 250
+  },
+  modal: {
+    flex: 0,
+    width: 350,
+    height: 300,
+    marginTop: 200,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: "white",
+    borderRadius: 25
   },
   lottie: { marginTop: 25 },
   inputBox: {

@@ -14,7 +14,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
-import Amplify, { Auth } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import LottieView from "lottie-react-native";
 import StyledAlertButton from "../components/StyledAlertButton";
 
@@ -207,9 +207,7 @@ export default SocialsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#2F2F2F"
     backgroundColor: "#3EC4CA"
-    // backgroundColor: "#f4858e"
   },
   contentContainer: {
     paddingTop: 30,

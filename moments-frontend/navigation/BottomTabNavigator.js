@@ -41,7 +41,7 @@ export default function BottomTabNavigator({ navigation }) {
         options={{
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
           title: "Albums",
-          unmountOnBlur: false
+          unmountOnBlur: true
         }}
       />
       <BottomTab.Screen

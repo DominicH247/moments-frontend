@@ -6,7 +6,6 @@ import {
   View,
   Image,
   Modal,
-  Button,
   RefreshControl,
   TouchableOpacity,
   Alert,
@@ -14,10 +13,9 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
-import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
 import StyledAlertButton from "../components/StyledAlertButton";
-import Amplify, { Auth } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import LottieView from "lottie-react-native";
 
 class LinksScreen extends Component {
@@ -82,7 +80,6 @@ class LinksScreen extends Component {
       .catch(error => {
         console.log(error);
       });
-    // remove from state
     this.setState(currentState => {
       const survivingPhotos = currentState.photos.filter(photo => {
         return photo !== url;
@@ -197,9 +194,7 @@ export default LinksScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#2F2F2F"
     backgroundColor: "#3EC4CA"
-    // backgroundColor: "#ffb92b"
   },
   contentContainer: {
     paddingTop: 30,

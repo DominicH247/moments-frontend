@@ -9,8 +9,7 @@ import {
   Modal,
   TouchableHighlight
 } from "react-native";
-import { Icon } from "react-native-elements";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { Component } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
@@ -20,8 +19,7 @@ import StyledButton from "../components/StyledButton";
 import StyledDarkButton from "../components/StyledDarkButton";
 import StyledAlertButton from "../components/StyledAlertButton";
 import LottieView from "lottie-react-native";
-import Amplify, { Auth } from "aws-amplify";
-import { Ionicons } from "@expo/vector-icons";
+import { Auth } from "aws-amplify";
 
 class HomeScreen extends Component {
   state = {
@@ -49,12 +47,10 @@ class HomeScreen extends Component {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
-        // alert("Accept camera roll permissions to make this work!");
       }
 
       const { status2 } = await Permissions.askAsync(Permissions.CAMERA);
       if (status2 !== "granted") {
-        // alert("Accept camera permissions to make this work!");
       }
     }
   };
@@ -255,21 +251,16 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#2F2F2F"
     backgroundColor: "#3EC4CA"
   },
   contentContainer: {
-    // paddingTop: 30,
     alignItems: "center"
   },
   topContainer: {
     backgroundColor: "#0F4B53",
     height: 200,
     width: 450,
-    // flexDirection: "row",
-    // flexWrap: "wrap",
     alignItems: "center",
-    // justifyContent: "space-around"
     shadowOffset: {
       width: 0,
       height: 2

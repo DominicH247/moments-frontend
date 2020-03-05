@@ -72,7 +72,6 @@ function App(props) {
   ];
 
   _renderItem = ({ item }) => {
-    console.log(item);
     return (
       <View
         style={{
@@ -101,23 +100,13 @@ function App(props) {
     setShowApp(true);
   };
 
-  // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHide();
-
-        // Load our initial navigation state
         setInitialNavigationState(await getInitialState());
-
-        // Load fonts
-        await Font.loadAsync({
-          ...Ionicons.font,
-          "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
-        });
-      } catch (e) {
-        // We might want to provide this error information to an error reporting service
-        console.warn(e);
+      } catch (error) {
+        console.warn(error);
       } finally {
         setLoadingComplete(true);
         SplashScreen.hide();
@@ -181,7 +170,6 @@ const styles = StyleSheet.create({
   },
   slideText: {
     height: 200
-    // marginBottom: 50
   },
   infoText: {
     color: "white",
