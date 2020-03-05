@@ -232,7 +232,7 @@ export default class LoginScreen extends Component {
           <View style={styles.buttonContainerColumn}>
             {this.state.hasSignedIn ? (
               <>
-                <Text style={styles.text}> Hello {this.state.username} welcome back! </Text>
+                <Text style={styles.text}> Hello {this.state.username} ! </Text>
                 <Text style={styles.smallText}>
                   {" "}
                   In order for your frame to recognise you please take a clear photo of your face

@@ -25,7 +25,8 @@ class SocialsScreen extends Component {
     valid: true,
     reason: "Invalid Input",
     username: "",
-    visible: false
+    visible: false,
+    modalVisible: false
   };
 
   componentDidMount() {

@@ -105,7 +105,6 @@ class HomeScreen extends Component {
       const survivingImages = currentState.image.filter(image => {
         return image.uri !== uri;
       });
-      survivingImages.reverse();
       return { image: survivingImages };
     });
   };
@@ -242,7 +241,7 @@ class HomeScreen extends Component {
         {this.state.image.length > 0 && (
           <>
             <View style={styles.bottomButton}>
-              <StyledDarkButton text="Send To Frame" onPress={this.uploadImage} />
+              <StyledDarkButton text="Upload Photos" onPress={this.uploadImage} />
             </View>
           </>
         )}
