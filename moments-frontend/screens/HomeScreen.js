@@ -115,7 +115,6 @@ class HomeScreen extends Component {
         name: "image.jpeg",
         type: "image/jpeg"
       });
-      console.log(data, "THIS IS DATA");
       axios
         .post("https://moments-s3.herokuapp.com/api/upload", data, {
           headers: {
@@ -134,7 +133,7 @@ class HomeScreen extends Component {
           this.setState({ image: [], visible: false });
         })
         .catch(error => {
-          console.log("--------> Big Ol' Error -------->", error);
+          console.log(error);
         });
     });
   };
